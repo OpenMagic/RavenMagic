@@ -80,7 +80,7 @@ namespace RavenMagic.Tests
             public void ShouldReturnEnumerableOfCollectionsInDocumentStore()
             {
                 // Given
-                IDocumentStore store = (new EmbeddableDocumentStore() { RunInMemory = true }).Initialize();
+                IDocumentStore store = MemoryDocumentStore.Initialize(waitForNonStaleResults: false);
                 
                 using (IDocumentSession session = store.OpenSession())
                 {
@@ -101,7 +101,7 @@ namespace RavenMagic.Tests
             public void ShouldReturnEmptyEnumerableWhenDocumentStoreIsEmpty()
             {
                 // Given
-                IDocumentStore store = (new EmbeddableDocumentStore() { RunInMemory = true }).Initialize();
+                IDocumentStore store = MemoryDocumentStore.Initialize(waitForNonStaleResults: false);
 
                 // When
                 var collections = store.QueryCollections();
