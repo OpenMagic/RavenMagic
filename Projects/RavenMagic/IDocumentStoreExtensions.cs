@@ -1,16 +1,46 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Raven.Client;
 using OpenMagic;
+using Raven.Abstractions.Data;
+using Raven.Client;
 using Raven.Client.Indexes;
-using Raven.Client.Document;
 
 namespace RavenMagic
 {
     public static class IDocumentStoreExtensions
     {
         public const string RavenDocumentsByEntityName_IndexName = "Raven/DocumentsByEntityName";
+
+        /// <summary>
+        /// Deletes the collection for <typeparamref name="T"/>.
+        /// </summary>
+        /// <typeparam name="T">The document type of the collection to delete.</typeparam>
+        /// <param name="documentStore">The document store to remove collection from.</param>
+        /// <exception cref="System.ArgumentNullException">When <paramref name="documentStore"/> is null.</exception>
+        public static void ClearCollection<T>(this IDocumentStore documentStore)
+        {
+            documentStore.MustNotBeNull("documentStore");
+
+            //var indexName = "ClearCollection_" + typeof(T).Name;
+            var indexName = Guid.NewGuid().ToString();
+
+            documentStore.DatabaseCommands.PutIndex(indexName, new IndexDefinitionBuilder<T>
+            {
+                Map = documents => documents.Select(entity => new { })
+            });
+
+            // Wait for indexing to complete. This method will probably only be used in unit tests so shouldn't be a problem.
+            documentStore.WaitForNonStaleResults(indexName);
+
+            documentStore
+                .DatabaseCommands
+                .DeleteByIndex(
+                    indexName,
+                    new IndexQuery(),
+                    allowStale: false
+                );
+        }
 
         private static void CreateDocumentsByEntityNameIndex(this IDocumentStore documentStore, bool waitForNonStaleResults)
         {
@@ -22,11 +52,7 @@ namespace RavenMagic
             // Wait for indexing to finish.
             if (waitForNonStaleResults)
             {
-                using (IDocumentSession session = documentStore.OpenSession())
-                {
-                    var query = session.Query<object>(RavenDocumentsByEntityName_IndexName).Customize(x => x.WaitForNonStaleResults());
-                    var result = query.FirstOrDefault();
-                }
+                documentStore.WaitForNonStaleResults(RavenDocumentsByEntityName_IndexName);
             }
         }
 
@@ -48,6 +74,17 @@ namespace RavenMagic
             var collections = documentStore.DatabaseCommands.GetTerms(RavenDocumentsByEntityName_IndexName, "Tag", "", 1024);
 
             return collections;
+        }
+
+        private static void WaitForNonStaleResults(this IDocumentStore documentStore, string indexName)
+        {
+            using (IDocumentSession session = documentStore.OpenSession())
+            {
+                session
+                    .Query<object>(indexName)
+                    .Customize(x => x.WaitForNonStaleResults())
+                    .Any();
+            }
         }
     }
 }
