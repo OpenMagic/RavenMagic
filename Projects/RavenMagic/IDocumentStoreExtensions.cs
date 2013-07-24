@@ -10,6 +10,8 @@ namespace RavenMagic
 {
     public static class IDocumentStoreExtensions
     {
+        public const string RavenDocumentsByEntityName_IndexName = "Raven/DocumentsByEntityName";
+
         private static void CreateDocumentsByEntityNameIndex(this IDocumentStore documentStore, bool waitForNonStaleResults)
         {
             var documentsIndex = new RavenDocumentsByEntityName();
@@ -22,7 +24,7 @@ namespace RavenMagic
             {
                 using (IDocumentSession session = documentStore.OpenSession())
                 {
-                    var query = session.Query<object>(documentsIndex.IndexName).Customize(x => x.WaitForNonStaleResults());
+                    var query = session.Query<object>(RavenDocumentsByEntityName_IndexName).Customize(x => x.WaitForNonStaleResults());
                     var result = query.FirstOrDefault();
                 }
             }
@@ -43,7 +45,7 @@ namespace RavenMagic
             documentStore.CreateDocumentsByEntityNameIndex(waitForNonStaleResults: true);
 
             // Get the collection names.
-            var collections = documentStore.DatabaseCommands.GetTerms("Raven/DocumentsByEntityName", "Tag", "", 1024);
+            var collections = documentStore.DatabaseCommands.GetTerms(RavenDocumentsByEntityName_IndexName, "Tag", "", 1024);
 
             return collections;
         }
