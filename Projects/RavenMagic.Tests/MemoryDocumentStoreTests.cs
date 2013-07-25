@@ -1,25 +1,45 @@
 ﻿using System;
 using System.Linq;
-using Raven.Client.Embedded;
 using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Raven.Client.Embedded;
 
 namespace RavenMagic.Tests
 {
     public class MemoryDocumentStoreTests
     {
         [TestClass]
-        public class Create : MemoryDocumentStoreTests
+        public class Constructor : MemoryDocumentStoreTests
         {
             [TestMethod]
-            public void ShouldReturnAnUninitializeDocumentStoreThatRunsInMemory()
+            public void ShouldReturnADocumentStoreThatRunsInMemory()
             {
                 // When
-                var documentStore = MemoryDocumentStore.Create(waitForNonStaleResults: true);
+                var documentStore = new MemoryDocumentStore();
 
                 // Then
                 documentStore.RunInMemory.Should().BeTrue();
+            }
 
+            [TestMethod]
+            public void ShouldReturnAnInitializedDocumentStoreWhen_initialize_IsTrue()
+            {
+                // When
+                var documentStore = new MemoryDocumentStore(initialize: true);
+
+                // Then
+                Action action = () => documentStore.OpenSession();
+
+                action.ShouldNotThrow<Exception>("because we are expect document store has been initialized and documents stores need to initialized before opening a session.");
+            }
+
+            [TestMethod]
+            public void ShouldReturnAnUninitializedDocumentStoreWhen_initialize_IsFalse()
+            {
+                // When
+                var documentStore = new MemoryDocumentStore(initialize: false, createDocumentsByEntityNameIndex: false);
+
+                // Then
                 Action action = () => documentStore.OpenSession();
 
                 action
@@ -31,7 +51,7 @@ namespace RavenMagic.Tests
             public void ShouldReturnDocumentStoreThatDoesNotAllowStaleResultsWhen_waitForNonStaleResults_IsTrue()
             {
                 // When
-                var documentStore = MemoryDocumentStore.Create(waitForNonStaleResults: true);
+                var documentStore = new MemoryDocumentStore(waitForNonStaleResults: true);
 
                 // Then
                 this.IsNoStaleQueriesListenerRegistered(documentStore).Should().BeTrue();
@@ -41,48 +61,20 @@ namespace RavenMagic.Tests
             public void ShouldReturnDocumentStoreThatDoesAllowStaleResultsWhen_waitForNonStaleResults_IsFalse()
             {
                 // When
-                var documentStore = MemoryDocumentStore.Create(waitForNonStaleResults: false);
+                var documentStore = new MemoryDocumentStore(waitForNonStaleResults: false);
 
                 // Then
                 this.IsNoStaleQueriesListenerRegistered(documentStore).Should().BeFalse();
             }
-        }
-
-        [TestClass]
-        public class Initialize : MemoryDocumentStoreTests
-        {
-            [TestMethod]
-            public void ShouldReturnAnInitializeDocumentStoreThatRunsInMemory()
-            {
-                // When
-                var documentStore = MemoryDocumentStore.Initialize(waitForNonStaleResults: true);
-
-                // Then
-                documentStore.RunInMemory.Should().BeTrue();
-
-                Action action = () => documentStore.OpenSession();
-
-                action.ShouldNotThrow<Exception>("because we are expect document store has been initialized and documents stores need to initialized before opening a session.");
-            }
 
             [TestMethod]
-            public void ShouldReturnDocumentStoreThatDoesNotAllowStaleResultsWhen_waitForNonStaleResults_IsTrue()
+            public void ShouldThrowArgumentExceptionWhen_initialize_IsFalseAnd_createDocumentsByEntityNameIndex_IsTrue()
             {
                 // When
-                var documentStore = MemoryDocumentStore.Initialize(waitForNonStaleResults: true);
+                Action action = () => new MemoryDocumentStore(initialize: false, createDocumentsByEntityNameIndex: true);
 
                 // Then
-                this.IsNoStaleQueriesListenerRegistered(documentStore).Should().BeTrue();
-            }
-
-            [TestMethod]
-            public void ShouldReturnDocumentStoreThatDoesAllowStaleResultsWhen_waitForNonStaleResults_IsFalse()
-            {
-                // When
-                var documentStore = MemoryDocumentStore.Initialize(waitForNonStaleResults: false);
-
-                // Then
-                this.IsNoStaleQueriesListenerRegistered(documentStore).Should().BeFalse();
+                action.ShouldThrow<ArgumentException>().WithMessage("initialize cannot be false when createDocumentsByEntityNameIndex is true.");                
             }
         }
 

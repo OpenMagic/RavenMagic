@@ -137,14 +137,14 @@ namespace RavenMagic
             }
         }
 
-        private static void CreateDocumentsByEntityNameIndex(this IDocumentStore documentStore, bool waitForNonStaleResults)
+        public static void CreateDocumentsByEntityNameIndex(this IDocumentStore documentStore, bool waitForNonStaleResults = true)
         {
+            documentStore.MustNotBeNull("documentStore");
+
             var documentsIndex = new RavenDocumentsByEntityName();
 
-            // Ensure the required index exists.
             documentStore.ExecuteIndex(documentsIndex);
 
-            // Wait for indexing to finish.
             if (waitForNonStaleResults)
             {
                 documentStore.WaitForNonStaleResults(RavenDocumentsByEntityName_IndexName);
@@ -182,7 +182,7 @@ namespace RavenMagic
         {
             documentStore.MustNotBeNull("documentStore");
 
-            documentStore.CreateDocumentsByEntityNameIndex(waitForNonStaleResults: true);
+            documentStore.CreateDocumentsByEntityNameIndex();
 
             // Get the collection names.
             var collections = documentStore.DatabaseCommands.GetTerms(RavenDocumentsByEntityName_IndexName, "Tag", "", 1024);

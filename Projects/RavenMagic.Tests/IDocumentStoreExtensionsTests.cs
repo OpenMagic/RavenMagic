@@ -30,7 +30,7 @@ namespace RavenMagic.Tests
             public void ShouldThrowArgumentNullExceptionWhen_id_IsNull()
             {
                 // Given 
-                var fakeDocumentStore = MemoryDocumentStore.Create(waitForNonStaleResults: true);
+                var fakeDocumentStore = new MemoryDocumentStore();
 
                 // When
                 Action action = () => IDocumentStoreExtensions.ChangeRavenClrTypeForDocument(documentStore: fakeDocumentStore, id: null, newRavenClrType: "fake");
@@ -45,7 +45,7 @@ namespace RavenMagic.Tests
             public void ShouldThrowArgumentNullExceptionWhen_id_IsWhiteSpace()
             {
                 // Given 
-                var fakeDocumentStore = MemoryDocumentStore.Create(waitForNonStaleResults: true);
+                var fakeDocumentStore = new MemoryDocumentStore();
 
                 // When
                 Action action = () => IDocumentStoreExtensions.ChangeRavenClrTypeForDocument(documentStore: fakeDocumentStore, id: "", newRavenClrType: "fake");
@@ -60,7 +60,7 @@ namespace RavenMagic.Tests
             public void ShouldThrowArgumentNullExceptionWhen_newRavenClrType_IsNull()
             {
                 // Given 
-                var fakeDocumentStore = MemoryDocumentStore.Create(waitForNonStaleResults: true);
+                var fakeDocumentStore = new MemoryDocumentStore();
 
                 // When
                 Action action = () => IDocumentStoreExtensions.ChangeRavenClrTypeForDocument(documentStore: fakeDocumentStore, id: "fake", newRavenClrType: null);
@@ -75,7 +75,7 @@ namespace RavenMagic.Tests
             public void ShouldThrowArgumentNullExceptionWhen_newRavenClrType_IsWhiteSpace()
             {
                 // Given 
-                var fakeDocumentStore = MemoryDocumentStore.Create(waitForNonStaleResults: true);
+                var fakeDocumentStore = new MemoryDocumentStore();
 
                 // When
                 Action action = () => IDocumentStoreExtensions.ChangeRavenClrTypeForDocument(documentStore: fakeDocumentStore, id: "fake", newRavenClrType: "");
@@ -90,7 +90,7 @@ namespace RavenMagic.Tests
             public void ShouldThrowArgumentNullExceptionWhen_id_DoesNotExist()
             {
                 // Given 
-                var store = MemoryDocumentStore.Initialize(waitForNonStaleResults: true);
+                var store = new MemoryDocumentStore();
 
                 // When
                 Action action = () => IDocumentStoreExtensions.ChangeRavenClrTypeForDocument(documentStore: store, id: "fakes/1", newRavenClrType: "fake");
@@ -106,7 +106,7 @@ namespace RavenMagic.Tests
             {
                 // Given
                 var expectedRavenClrType = "fake raven clr type";
-                var store = MemoryDocumentStore.Initialize(waitForNonStaleResults: true);
+                var store = new MemoryDocumentStore();
                 var session = store.OpenSession();
                 var product = new Product { Id = "products/1" };
 
@@ -142,7 +142,7 @@ namespace RavenMagic.Tests
             public void ShouldNotThrowExceptionDocumentStoreDoesNotHaveRequestedCollection()
             {
                 // Given
-                IDocumentStore store = MemoryDocumentStore.Initialize(waitForNonStaleResults: false);
+                IDocumentStore store = new MemoryDocumentStore();
 
                 // When
                 Action action = () => store.ClearCollection<Person>();
@@ -155,7 +155,7 @@ namespace RavenMagic.Tests
             public void ShouldDeleteAllDocumentsFromTheDatabase()
             {
                 // Given
-                IDocumentStore store = MemoryDocumentStore.Initialize(waitForNonStaleResults: false);
+                IDocumentStore store = new MemoryDocumentStore();
 
                 using (IDocumentSession session = store.OpenSession())
                 {
@@ -171,6 +171,51 @@ namespace RavenMagic.Tests
                 {
                     session.Query<Person>().Any().Should().BeFalse("because all documents should have been deleted.");
                 }
+            }
+        }
+
+        [TestClass]
+        public class CreateDocumentsByEntityNameIndex
+        {
+            [TestMethod]
+            public void ShouldThrow_ArgumentNullException_When_documentStore_IsNull()
+            {
+                // When
+                Action action = () => IDocumentStoreExtensions.CreateDocumentsByEntityNameIndex(null);
+
+                // Then
+                action.ShouldThrow<ArgumentNullException>().WithMessage("Value cannot be null.\r\nParameter name: documentStore");
+            }
+
+            [TestMethod]
+            public void ShouldCreate_Raven_DocumentsByEntityName_IndexWhenDoesNotExist()
+            {
+                // Given
+                var store = new MemoryDocumentStore(createDocumentsByEntityNameIndex: false);
+
+                store.DatabaseCommands.GetIndexes(0, 1024).Count().Should().Be(0, "because I'm testing the assumption a memory document store has 0 indexes when created");
+
+                // When
+                store.CreateDocumentsByEntityNameIndex();
+
+                // Then
+                var indexes = store.DatabaseCommands.GetIndexes(0, 1024);
+                var indexName = indexes.Single().Name;
+
+                indexName.Should().Be("Raven/DocumentsByEntityName");
+            }
+
+            [TestMethod]
+            public void ShouldNotThrowAnExceptionWhen_Raven_DocumentsByEntityName_IndexDoesExist()
+            {
+                // Given
+                var store = new MemoryDocumentStore(createDocumentsByEntityNameIndex: true);
+
+                // When
+                Action action = () => store.CreateDocumentsByEntityNameIndex();
+
+                // Then
+                action.ShouldNotThrow<Exception>();
             }
         }
 
@@ -193,9 +238,9 @@ namespace RavenMagic.Tests
             public void ShouldChange_MetaData_Raven_Clr_Type_ForDocumentsOf_T()
             {
                 // Given
-                var store = MemoryDocumentStore.Initialize(waitForNonStaleResults: true);
-                var product = new Product { Name = "fake product name"};
-                var person = new Person { Name = "fake person name"};
+                var store = new MemoryDocumentStore();
+                var product = new Product { Name = "fake product name" };
+                var person = new Person { Name = "fake person name" };
 
                 using (var session = store.OpenSession())
                 {
@@ -261,7 +306,7 @@ namespace RavenMagic.Tests
             public void ShouldReturnEnumerableOfCollectionsInDocumentStore()
             {
                 // Given
-                IDocumentStore store = MemoryDocumentStore.Initialize(waitForNonStaleResults: false);
+                IDocumentStore store = new MemoryDocumentStore();
 
                 using (IDocumentSession session = store.OpenSession())
                 {
@@ -282,7 +327,7 @@ namespace RavenMagic.Tests
             public void ShouldReturnEmptyEnumerableWhenDocumentStoreIsEmpty()
             {
                 // Given
-                IDocumentStore store = MemoryDocumentStore.Initialize(waitForNonStaleResults: false);
+                IDocumentStore store = new MemoryDocumentStore();
 
                 // When
                 var collections = store.QueryCollections();
