@@ -28,23 +28,23 @@ namespace RavenMagic.Tests
             }
 
             [TestMethod]
-            public void ShouldReturnDocumentStoreThatAllowsStaleQueriesWhen_waitForNonStaleResults_IsTrue()
+            public void ShouldReturnDocumentStoreThatDoesNotAllowStaleResultsWhen_waitForNonStaleResults_IsTrue()
             {
                 // When
                 var documentStore = MemoryDocumentStore.Create(waitForNonStaleResults: true);
 
                 // Then
-                this.IsNoStateQueriesListenerRegistered(documentStore).Should().BeFalse();
+                this.IsNoStaleQueriesListenerRegistered(documentStore).Should().BeTrue();
             }
 
             [TestMethod]
-            public void ShouldReturnDocumentStoreThatDoesNotWaitForNonStaleResultsWhen_waitForNonStaleResults_IsFalse()
+            public void ShouldReturnDocumentStoreThatDoesAllowStaleResultsWhen_waitForNonStaleResults_IsFalse()
             {
                 // When
                 var documentStore = MemoryDocumentStore.Create(waitForNonStaleResults: false);
 
                 // Then
-                this.IsNoStateQueriesListenerRegistered(documentStore).Should().BeTrue();
+                this.IsNoStaleQueriesListenerRegistered(documentStore).Should().BeFalse();
             }
         }
 
@@ -66,28 +66,33 @@ namespace RavenMagic.Tests
             }
 
             [TestMethod]
-            public void ShouldReturnDocumentStoreThatWaitForNonStaleResultsWhen_waitForNonStaleResults_IsTrue()
+            public void ShouldReturnDocumentStoreThatDoesNotAllowStaleResultsWhen_waitForNonStaleResults_IsTrue()
             {
                 // When
-                var documentStore = MemoryDocumentStore.Initialize(waitForNonStaleResults: false);
+                var documentStore = MemoryDocumentStore.Initialize(waitForNonStaleResults: true);
 
                 // Then
-                this.IsNoStateQueriesListenerRegistered(documentStore).Should().BeTrue();
+                this.IsNoStaleQueriesListenerRegistered(documentStore).Should().BeTrue();
             }
 
             [TestMethod]
-            public void ShouldReturnDocumentStoreThatDoesNotWaitForNonStaleResultsWhen_waitForNonStaleResults_IsFalse()
+            public void ShouldReturnDocumentStoreThatDoesAllowStaleResultsWhen_waitForNonStaleResults_IsFalse()
             {
                 // When
                 var documentStore = MemoryDocumentStore.Initialize(waitForNonStaleResults: false);
 
                 // Then
-                this.IsNoStateQueriesListenerRegistered(documentStore).Should().BeTrue();
+                this.IsNoStaleQueriesListenerRegistered(documentStore).Should().BeFalse();
             }
         }
 
-        private bool IsNoStateQueriesListenerRegistered(EmbeddableDocumentStore documentStore)
+        private bool IsNoStaleQueriesListenerRegistered(EmbeddableDocumentStore documentStore)
         {
+            foreach (var listener in documentStore.RegisteredQueryListeners)
+            {
+                Console.WriteLine(listener.GetType());
+            }
+
             return documentStore.RegisteredQueryListeners.Any(q => q.GetType().IsAssignableFrom(typeof(WaitForNonStaleResultsListener)));
         }
     }

@@ -17,7 +17,7 @@ namespace RavenMagic
         {
             var store = new EmbeddableDocumentStore() { RunInMemory = true };
 
-            if (!waitForNonStaleResults)
+            if (waitForNonStaleResults)
             {
                 store.RegisterListener(new WaitForNonStaleResultsListener());
             }
