@@ -88,11 +88,6 @@ namespace RavenMagic.Tests
 
         private bool IsNoStaleQueriesListenerRegistered(EmbeddableDocumentStore documentStore)
         {
-            foreach (var listener in documentStore.RegisteredQueryListeners)
-            {
-                Console.WriteLine(listener.GetType());
-            }
-
             return documentStore.RegisteredQueryListeners.Any(q => q.GetType().IsAssignableFrom(typeof(WaitForNonStaleResultsListener)));
         }
     }
