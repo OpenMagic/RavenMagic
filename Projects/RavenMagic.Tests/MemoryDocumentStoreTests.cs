@@ -30,7 +30,7 @@ namespace RavenMagic.Tests
                 // Then
                 Action action = () => documentStore.OpenSession();
 
-                action.ShouldNotThrow<Exception>("because we are expect document store has been initialized and documents stores need to initialized before opening a session.");
+                action.ShouldNotThrow<Exception>("because we are expect document documentStore has been initialized and documents stores need to initialized before opening a session.");
             }
 
             [TestMethod]

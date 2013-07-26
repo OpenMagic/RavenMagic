@@ -177,8 +177,8 @@ namespace RavenMagic
 
             generic.Invoke(null, new object[] { documentStore });
         }
-
-
+        
+        // todo: document
         public static void CreateDocumentsByEntityNameIndex(this IDocumentStore documentStore, bool waitForNonStaleResults = true)
         {
             documentStore.MustNotBeNull("documentStore");
@@ -210,6 +210,24 @@ namespace RavenMagic
             documentStore.OpenSession().Advanced.LuceneQuery<object>(indexName).WaitForNonStaleResults().ToList();
 
             return indexName;
+        }
+
+        /// <summary>
+        /// Determines if the index is stale.
+        /// </summary>
+        /// <param name="documentStore">The document store that contains the index.</param>
+        /// <param name="indexName">Name of the index to test.</param>
+        public static bool IsIndexStale(this IDocumentStore documentStore, string indexName)
+        {
+            documentStore.MustNotBeNull("documentStore");
+            indexName.MustNotBeNullOrWhiteSpace("indexName");
+
+            RavenQueryStatistics stats = null;
+
+            // todo: Refactor into IDocumentSessionExtensions.
+            documentStore.OpenSession().Query<object>(indexName).Statistics(out stats).Any();
+
+            return stats.IsStale;
         }
 
         /// <summary>
