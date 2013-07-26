@@ -213,7 +213,7 @@ namespace RavenMagic
         }
 
         /// <summary>
-        /// Determines if the index is stale.
+        /// Determines if an index is stale.
         /// </summary>
         /// <param name="documentStore">The document store that contains the index.</param>
         /// <param name="indexName">Name of the index to test.</param>
@@ -222,12 +222,10 @@ namespace RavenMagic
             documentStore.MustNotBeNull("documentStore");
             indexName.MustNotBeNullOrWhiteSpace("indexName");
 
-            RavenQueryStatistics stats = null;
-
-            // todo: Refactor into IDocumentSessionExtensions.
-            documentStore.OpenSession().Query<object>(indexName).Statistics(out stats).Any();
-
-            return stats.IsStale;
+            using (var session = documentStore.OpenSession())
+            {
+                return session.IsIndexStale(indexName);
+            }
         }
 
         /// <summary>

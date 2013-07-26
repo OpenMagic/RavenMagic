@@ -68,6 +68,8 @@
     </CodeAnalysisDependentAssemblyPaths>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BaseTestClass.cs" />
+    <Compile Include="IDocumentSessionExtensionsTests.cs" />
     <Compile Include="IDocumentStoreExtensionsTests.cs" />
     <Compile Include="MemoryDocumentStoreTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

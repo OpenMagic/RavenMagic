@@ -62,6 +62,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="IDocumentSessionExtensions.cs" />
     <Compile Include="RavenConstants.cs" />
     <Compile Include="RavenMetaDataNames.cs" />
     <Compile Include="WaitForNonStaleResultsListener.cs" />
