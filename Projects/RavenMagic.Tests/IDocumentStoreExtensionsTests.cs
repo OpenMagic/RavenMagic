@@ -288,6 +288,92 @@ namespace RavenMagic.Tests
         }
 
         [TestClass]
+        public class CorrectRavenClrTypeFor_NonGeneric
+        {
+            [TestMethod]
+            public void ShouldThrowArgumentNullExceptionWhen_documentStore_IsNull()
+            {
+                // Given
+                var fakeType = typeof(Exception);
+
+                // When
+                Action action = () => IDocumentStoreExtensions.CorrectRavenClrTypeForCollection(documentStore: null, documentType: fakeType);
+
+                // Then
+                action
+                    .ShouldThrow<ArgumentNullException>()
+                    .WithMessage("Value cannot be null.\r\nParameter name: documentStore");
+            }
+
+            [TestMethod]
+            public void ShouldThrowArgumentNullExceptionWhen_documentType_IsNull()
+            {
+                // Given
+                var fakeDocumentStore = new MemoryDocumentStore();
+
+                // When
+                Action action = () => IDocumentStoreExtensions.CorrectRavenClrTypeForCollection(documentStore: fakeDocumentStore, documentType: null);
+
+                // Then
+                action
+                    .ShouldThrow<ArgumentNullException>()
+                    .WithMessage("Value cannot be null.\r\nParameter name: documentType");
+            }
+
+            [TestMethod]
+            public void ShouldChange_MetaData_Raven_Clr_Type_ForDocumentsOf_T()
+            {
+                // Given
+                var store = new MemoryDocumentStore();
+                var product = new Product { Name = "fake product name" };
+                var person = new Person { Name = "fake person name" };
+
+                using (var session = store.OpenSession())
+                {
+                    session.Store(product);
+                    session.Store(person);
+                    session.SaveChanges();
+                }
+
+                store.ChangeRavenClrTypeForDocument(product.Id, "fake Raven-Clr-Type");
+                store.ChangeRavenClrTypeForDocument(person.Id, "fake Raven-Clr-Type");
+
+                // When
+                store.CorrectRavenClrTypeForCollection(typeof(Product));
+
+                // Then
+                string expectedRavenClrTypeForProduct = string.Format("{0}, {1}", product.GetType().FullName, product.GetType().Assembly.GetName().Name);
+                string expectedRavenClrTypeForPerson = "fake Raven-Clr-Type";
+
+                string actualRavenClrTypeForProduct;
+                string actualRavenClrTypeForPerson;
+
+                // Get values to perform tests on
+                using (var session = store.OpenSession())
+                {
+                    product = session.Query<Product>().Single();
+
+                    actualRavenClrTypeForProduct = session.Advanced.GetMetadataFor(product).Value<string>(RavenConstants.Metadata.RavenClrType);
+
+                    person = session.Query<Person>().Single();
+
+                    actualRavenClrTypeForPerson = session.Advanced.GetMetadataFor(person).Value<string>(RavenConstants.Metadata.RavenClrType);
+                }
+
+                // Perform the tests
+                actualRavenClrTypeForProduct.Should().Be(expectedRavenClrTypeForProduct, "because that is what CorrectRavenClrTypeForCollection() should have changed it to");
+                actualRavenClrTypeForPerson.Should().Be(expectedRavenClrTypeForPerson, "because CorrectRavenClrTypeForCollection() should not have touch person documents");
+
+                // Perform sanity checks
+                product.Should().NotBeNull("because I'm doing a sanity check that the document could still be read");
+                product.Name.Should().Be("fake product name", "because I'm doing a sanity check that the document could still be read");
+
+                person.Should().NotBeNull("because I'm doing a sanity check that the document could still be read");
+                person.Name.Should().Be("fake person name", "because I'm doing a sanity check that the document could still be read");
+            }
+        }
+
+        [TestClass]
         public class QueryCollections
         {
             [TestMethod]

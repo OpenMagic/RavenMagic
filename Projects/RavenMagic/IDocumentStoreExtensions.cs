@@ -136,6 +136,21 @@ namespace RavenMagic
             }
         }
 
+        /// <summary>
+        /// Non-generic version of <see cref="CorrectRavenClrTypeForCollection"/>. See its' documentation for more details.
+        /// </summary>
+        public static void CorrectRavenClrTypeForCollection(this IDocumentStore documentStore, Type documentType)
+        {
+            documentStore.MustNotBeNull("documentStore");
+            documentType.MustNotBeNull("documentType");
+
+            var method = typeof(IDocumentStoreExtensions).GetMethods().Single(m => m.Name == "CorrectRavenClrTypeForCollection" && m.GetParameters().Count() == 1);
+            var generic = method.MakeGenericMethod(documentType);
+
+            generic.Invoke(null, new object[] { documentStore });
+        }
+
+
         public static void CreateDocumentsByEntityNameIndex(this IDocumentStore documentStore, bool waitForNonStaleResults = true)
         {
             documentStore.MustNotBeNull("documentStore");
