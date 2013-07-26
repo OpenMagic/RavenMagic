@@ -81,6 +81,43 @@ namespace RavenMagic
         /// The <see cref="IDocumentStore"/> that contains <typeparamref name="T"/> documents.
         /// </param>
         /// <remarks>
+        /// See CorrectRavenClrTypeForCollection<T>(this IDocumentStore documentStore, string indexName)
+        /// for more details.
+        /// </remarks>
+        public static void CorrectRavenClrTypeForCollection<T>(this IDocumentStore documentStore)
+        {
+            documentStore.MustNotBeNull("documentStore");
+
+            var indexName = CreateTemporaryIndexForCollection<T>(documentStore);
+
+            try
+            {
+                documentStore.CorrectRavenClrTypeForCollection<T>(indexName);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+            finally
+            {
+                // Remove the temporary index we created for the collection.
+                documentStore.DatabaseCommands.DeleteIndex(indexName);
+            }
+        }
+
+        /// <summary>
+        /// Corrects metadata's Raven-Clr-Type for all <typeparamref name="T"/> documents.
+        /// </summary>
+        /// <typeparam name="T">
+        /// The type of document to correct.
+        /// </typeparam>
+        /// <param name="documentStore">
+        /// The <see cref="IDocumentStore"/> that contains <typeparamref name="T"/> documents.
+        /// </param>
+        /// <param name="indexName">
+        /// The index to be used by the operation.
+        /// </param>
+        /// <remarks>
         /// RavenDB stores metadata with every document. One of those values is Raven-Clr-Type.
         /// 
         /// Raven-Clr-Type is the .Net type of the document at time of storing. The format is 
@@ -94,46 +131,37 @@ namespace RavenMagic
         /// 
         /// The solution is to correct Raven-Clr-Type for affected documents.
         /// </remarks>
-        public static void CorrectRavenClrTypeForCollection<T>(this IDocumentStore documentStore)
+        public static void CorrectRavenClrTypeForCollection<T>(this IDocumentStore documentStore, string indexName)
         {
             documentStore.MustNotBeNull("documentStore");
+            indexName.MustNotBeNullOrWhiteSpace("indexName");
 
-            var indexName = CreateTemporaryIndexForCollection<T>(documentStore);
+            // The call to documentStore.DatabaseCommands.UpdateByIndex() expects the index will not be stale.
+            documentStore.WaitForNonStaleResults(indexName);
+            
             var newRavenClrType = string.Format("{0}, {1}", typeof(T).FullName, typeof(T).Assembly.GetName().Name);
 
-            try
-            {
-                documentStore.DatabaseCommands.UpdateByIndex(
-                    indexName,
-                    new IndexQuery(),
-                    new[]
+            documentStore.DatabaseCommands.UpdateByIndex(
+                indexName,
+                new IndexQuery(),
+                new[]
+                {
+                    new PatchRequest()
                     {
-                        new PatchRequest()
+                        Type = PatchCommandType.Modify,
+                        Name="@metadata",
+                        Nested = new []
                         {
-                            Type = PatchCommandType.Modify,
-                            Name="@metadata",
-                            Nested = new []
+                            new PatchRequest()
                             {
-                                new PatchRequest()
-                                {
-                                    Type = PatchCommandType.Set,
-                                    Name = RavenConstants.Metadata.RavenClrType,
-                                    Value = new RavenJValue(newRavenClrType)
-                                }
+                                Type = PatchCommandType.Set,
+                                Name = RavenConstants.Metadata.RavenClrType,
+                                Value = new RavenJValue(newRavenClrType)
                             }
                         }
                     }
-                );
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-            finally
-            {
-                // Remove the temporary index we created for the collection.
-                documentStore.DatabaseCommands.DeleteIndex(indexName);
-            }
+                }
+            );
         }
 
         /// <summary>

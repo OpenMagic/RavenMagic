@@ -6,6 +6,7 @@ using Raven.Client;
 using Raven.Client.Embedded;
 using RavenMagic.Tests.TestHelpers.Models;
 using Raven.Json.Linq;
+using Raven.Client.Indexes;
 
 namespace RavenMagic.Tests
 {
@@ -235,6 +236,36 @@ namespace RavenMagic.Tests
             }
 
             [TestMethod]
+            public void ShouldThrowArgumentExceptionWhen_indexName_IsNull()
+            {
+                // Given
+                var fakeStore = new MemoryDocumentStore();
+
+                // When
+                Action action = () => IDocumentStoreExtensions.CorrectRavenClrTypeForCollection<object>(documentStore: fakeStore, indexName: null);
+
+                // Then
+                action
+                    .ShouldThrow<ArgumentNullException>()
+                    .WithMessage("Value cannot be null.\r\nParameter name: indexName");
+            }
+
+            [TestMethod]
+            public void ShouldThrowArgumentExceptionWhen_indexName_IsWhiteSpace()
+            {
+                // Given
+                var fakeStore = new MemoryDocumentStore();
+
+                // When
+                Action action = () => IDocumentStoreExtensions.CorrectRavenClrTypeForCollection<object>(documentStore: fakeStore, indexName: "");
+
+                // Then
+                action
+                    .ShouldThrow<ArgumentException>()
+                    .WithMessage("Value cannot be whitespace.\r\nParameter name: indexName");
+            }
+
+            [TestMethod]
             public void ShouldChange_MetaData_Raven_Clr_Type_ForDocumentsOf_T()
             {
                 // Given
@@ -254,6 +285,61 @@ namespace RavenMagic.Tests
 
                 // When
                 store.CorrectRavenClrTypeForCollection<Product>();
+
+                // Then
+                string expectedRavenClrTypeForProduct = string.Format("{0}, {1}", product.GetType().FullName, product.GetType().Assembly.GetName().Name);
+                string expectedRavenClrTypeForPerson = "fake Raven-Clr-Type";
+
+                string actualRavenClrTypeForProduct;
+                string actualRavenClrTypeForPerson;
+
+                // Get values to perform tests on
+                using (var session = store.OpenSession())
+                {
+                    product = session.Query<Product>().Single();
+
+                    actualRavenClrTypeForProduct = session.Advanced.GetMetadataFor(product).Value<string>(RavenConstants.Metadata.RavenClrType);
+
+                    person = session.Query<Person>().Single();
+
+                    actualRavenClrTypeForPerson = session.Advanced.GetMetadataFor(person).Value<string>(RavenConstants.Metadata.RavenClrType);
+                }
+
+                // Perform the tests
+                actualRavenClrTypeForProduct.Should().Be(expectedRavenClrTypeForProduct, "because that is what CorrectRavenClrTypeForCollection() should have changed it to");
+                actualRavenClrTypeForPerson.Should().Be(expectedRavenClrTypeForPerson, "because CorrectRavenClrTypeForCollection() should not have touch person documents");
+
+                // Perform sanity checks
+                product.Should().NotBeNull("because I'm doing a sanity check that the document could still be read");
+                product.Name.Should().Be("fake product name", "because I'm doing a sanity check that the document could still be read");
+
+                person.Should().NotBeNull("because I'm doing a sanity check that the document could still be read");
+                person.Name.Should().Be("fake person name", "because I'm doing a sanity check that the document could still be read");
+            }
+
+            [TestMethod]
+            public void ShouldChange_MetaData_Raven_Clr_Type_ForDocumentsOf_T_When_indexName_OfExistingIndexIsProvided()
+            {
+                // Given
+                var store = new MemoryDocumentStore();
+                var product = new Product { Name = "fake product name" };
+                var person = new Person { Name = "fake person name" };
+                var indexName = "ProductsIndex";
+
+                store.DatabaseCommands.PutIndex(indexName, new IndexDefinitionBuilder<Product> { Map = documents => documents.Select(p => new { p.Name }) });
+
+                using (var session = store.OpenSession())
+                {
+                    session.Store(product);
+                    session.Store(person);
+                    session.SaveChanges();
+                }
+
+                store.ChangeRavenClrTypeForDocument(product.Id, "fake Raven-Clr-Type");
+                store.ChangeRavenClrTypeForDocument(person.Id, "fake Raven-Clr-Type");
+
+                // When
+                store.CorrectRavenClrTypeForCollection<Product>(indexName);
 
                 // Then
                 string expectedRavenClrTypeForProduct = string.Format("{0}, {1}", product.GetType().FullName, product.GetType().Assembly.GetName().Name);
