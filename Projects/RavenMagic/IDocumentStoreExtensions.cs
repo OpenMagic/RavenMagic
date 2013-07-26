@@ -11,7 +11,6 @@ namespace RavenMagic
 {
     public static class IDocumentStoreExtensions
     {
-        public const string RavenDocumentsByEntityName_IndexName = "Raven/DocumentsByEntityName";
 
         /// <summary>
         /// Deletes the collection for <typeparamref name="T"/>.
@@ -66,10 +65,10 @@ namespace RavenMagic
             }
 
             // Change the metadata.
-            jsonDocument.Metadata[RavenMetaDataNames.RavenClrType] = newRavenClrType;
+            jsonDocument.Metadata[RavenConstants.Metadata.RavenClrType] = newRavenClrType;
 
             // Save the changed metadata.
-            documentStore.DatabaseCommands.Put(id, jsonDocument.Metadata.Value<Guid?>(RavenMetaDataNames.etag), jsonDocument.DataAsJson, jsonDocument.Metadata);
+            documentStore.DatabaseCommands.Put(id, jsonDocument.Metadata.Value<Guid?>(RavenConstants.Metadata.etag), jsonDocument.DataAsJson, jsonDocument.Metadata);
         }
 
         /// <summary>
@@ -118,7 +117,7 @@ namespace RavenMagic
                                 new PatchRequest()
                                 {
                                     Type = PatchCommandType.Set,
-                                    Name = RavenMetaDataNames.RavenClrType,
+                                    Name = RavenConstants.Metadata.RavenClrType,
                                     Value = new RavenJValue(newRavenClrType)
                                 }
                             }
@@ -147,7 +146,7 @@ namespace RavenMagic
 
             if (waitForNonStaleResults)
             {
-                documentStore.WaitForNonStaleResults(RavenDocumentsByEntityName_IndexName);
+                documentStore.WaitForNonStaleResults(RavenConstants.Indexes.DocumentsByEntityName);
             }
         }
 
@@ -185,7 +184,7 @@ namespace RavenMagic
             documentStore.CreateDocumentsByEntityNameIndex();
 
             // Get the collection names.
-            var collections = documentStore.DatabaseCommands.GetTerms(RavenDocumentsByEntityName_IndexName, "Tag", "", 1024);
+            var collections = documentStore.DatabaseCommands.GetTerms(RavenConstants.Indexes.DocumentsByEntityName, "Tag", "", 1024);
 
             return collections;
         }

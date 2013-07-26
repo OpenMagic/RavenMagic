@@ -117,7 +117,7 @@ namespace RavenMagic.Tests
                 store.ChangeRavenClrTypeForDocument(product.Id, expectedRavenClrType);
 
                 // Then
-                var actualRavenClrType = store.OpenSession().Advanced.GetMetadataFor(product).Value<string>(RavenMetaDataNames.RavenClrType);
+                var actualRavenClrType = store.OpenSession().Advanced.GetMetadataFor(product).Value<string>(RavenConstants.Metadata.RavenClrType);
 
                 actualRavenClrType.Should().Be(expectedRavenClrType);
             }
@@ -267,11 +267,11 @@ namespace RavenMagic.Tests
                 {
                     product = session.Query<Product>().Single();
 
-                    actualRavenClrTypeForProduct = session.Advanced.GetMetadataFor(product).Value<string>(RavenMetaDataNames.RavenClrType);
+                    actualRavenClrTypeForProduct = session.Advanced.GetMetadataFor(product).Value<string>(RavenConstants.Metadata.RavenClrType);
 
                     person = session.Query<Person>().Single();
 
-                    actualRavenClrTypeForPerson = session.Advanced.GetMetadataFor(person).Value<string>(RavenMetaDataNames.RavenClrType);
+                    actualRavenClrTypeForPerson = session.Advanced.GetMetadataFor(person).Value<string>(RavenConstants.Metadata.RavenClrType);
                 }
 
                 // Perform the tests
