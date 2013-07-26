@@ -3,10 +3,8 @@ using System.Linq;
 using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Raven.Client;
-using Raven.Client.Embedded;
-using RavenMagic.Tests.TestHelpers.Models;
-using Raven.Json.Linq;
 using Raven.Client.Indexes;
+using RavenMagic.Tests.TestHelpers.Models;
 
 namespace RavenMagic.Tests
 {
@@ -506,6 +504,107 @@ namespace RavenMagic.Tests
 
                 // Then
                 collections.Any().Should().BeFalse();
+            }
+        }
+
+        [TestClass]
+        public class WaitForNonStaleResults
+        {
+            [TestMethod]
+            public void ShouldThrowArgumentNullExceptionWhen_documentStore_IsNull()
+            {
+                // When
+                Action action = () => IDocumentStoreExtensions.WaitForNonStaleResults(documentStore: null, indexName: "fake");
+
+                // Then
+                action
+                    .ShouldThrow<ArgumentNullException>()
+                    .WithMessage("Value cannot be null.\r\nParameter name: documentStore");
+            }
+
+            [TestMethod]
+            public void ShouldThrowArgumentExceptionWhen_indexName_IsNull()
+            {
+                // Given
+                var fakeStore = new MemoryDocumentStore();
+
+                // When
+                Action action = () => IDocumentStoreExtensions.WaitForNonStaleResults(documentStore: fakeStore, indexName: null);
+
+                // Then
+                action
+                    .ShouldThrow<ArgumentNullException>()
+                    .WithMessage("Value cannot be null.\r\nParameter name: indexName");
+            }
+
+            [TestMethod]
+            public void ShouldThrowArgumentExceptionWhen_indexName_IsWhiteSpace()
+            {
+                // Given
+                var fakeStore = new MemoryDocumentStore();
+
+                // When
+                Action action = () => IDocumentStoreExtensions.WaitForNonStaleResults(documentStore: fakeStore, indexName: "");
+
+                // Then
+                action
+                    .ShouldThrow<ArgumentException>()
+                    .WithMessage("Value cannot be whitespace.\r\nParameter name: indexName");
+            }
+
+            [TestMethod]
+            public void ShouldEnsureIndexIsNotStale()
+            {
+                // Given
+                var store = new MemoryDocumentStore(waitForNonStaleResults: false);
+                var indexName = "ProductsIndex";
+                var fakeDocumentCount = 1000;
+                
+                StoreFakeProducts(store, fakeDocumentCount);
+                CreateProductsIndex(store, indexName);
+                ValidateIndexIsStale(store, indexName);
+
+                // When
+                store.WaitForNonStaleResults(indexName);
+
+                // Then
+                IsIndexStale(store, indexName).Should().BeFalse(); // todo: refactor: Add to IDocumentStoreExtensions.
+            }
+
+            private bool IsIndexStale(MemoryDocumentStore store, string indexName)
+            {
+                RavenQueryStatistics stats = null;
+
+                store.OpenSession().Query<object>(indexName).Statistics(out stats).Any();
+
+                return stats.IsStale;
+            }
+
+            private void StoreFakeProducts(IDocumentStore store, int count)
+            {
+                using (var session = store.OpenSession())
+                {
+                    for (int i = 0; i < count; i++)
+                    {
+                        session.Store(new Product());
+                    }
+                    session.SaveChanges();
+                }
+            }
+
+            private void CreateProductsIndex(MemoryDocumentStore store, string indexName)
+            {
+                store.DatabaseCommands.PutIndex(indexName, new IndexDefinitionBuilder<Product> { Map = documents => documents.Select(p => new { p.Name }) });
+            }
+
+            private void ValidateIndexIsStale(MemoryDocumentStore store, string indexName)
+            {
+                if (IsIndexStale(store, indexName))
+                {
+                    return;
+                }
+
+                throw new Exception("Test cannot continue because the index is not stale. Try adding more fake products to the collection.");
             }
         }
     }

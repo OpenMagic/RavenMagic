@@ -232,8 +232,16 @@ namespace RavenMagic
             return collections;
         }
 
-        private static void WaitForNonStaleResults(this IDocumentStore documentStore, string indexName)
+        /// <summary>
+        /// Waits for <see cref="indexName"/> to be up to date.
+        /// </summary>
+        /// <param name="documentStore">The document store that contains the index.</param>
+        /// <param name="indexName">Name of the index to get up to date.</param>
+        public static void WaitForNonStaleResults(this IDocumentStore documentStore, string indexName)
         {
+            documentStore.MustNotBeNull("documentStore");
+            indexName.MustNotBeNullOrWhiteSpace("indexName");
+
             using (IDocumentSession session = documentStore.OpenSession())
             {
                 session
