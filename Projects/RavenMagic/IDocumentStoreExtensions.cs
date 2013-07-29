@@ -349,7 +349,7 @@ namespace RavenMagic
 
             using (IDocumentSession session = documentStore.OpenSession())
             {
-                session.WaitForNonStaleResults(indexName, TimeSpan.FromSeconds(15));
+                session.WaitForNonStaleResults(indexName, waitTimeout);
             }
         }
     }
