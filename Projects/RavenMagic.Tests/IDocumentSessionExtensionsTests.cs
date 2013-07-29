@@ -177,7 +177,7 @@ namespace RavenMagic.Tests
             [TestMethod]
             public void ShouldThrowTimeoutExceptionIf_maximumAttempts_IsExceeded()
             {
-                Assert.Inconclusive("todo");
+                Assert.Inconclusive("todo: hard to implement a test. mocking difficult.");
             }
         }
     }
