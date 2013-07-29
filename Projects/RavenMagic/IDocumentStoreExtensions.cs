@@ -191,6 +191,29 @@ namespace RavenMagic
         }
 
         /// <summary>
+        /// Non-generic version of <see cref="CorrectRavenClrTypeForCollection"/>. See its' documentation for more details.
+        /// </summary>
+        public static void CorrectRavenClrTypeForCollection(this IDocumentStore documentStore, Type documentType, string indexName)
+        {
+            documentStore.MustNotBeNull("documentStore");
+            documentType.MustNotBeNull("documentType");
+            indexName.MustNotBeNullOrWhiteSpace("indexName");
+
+            var query = from m in typeof(IDocumentStoreExtensions).GetMethods()
+                        let parameters = m.GetParameters()
+                        where m.Name == "CorrectRavenClrTypeForCollection"
+                            && parameters.Count() == 2
+                            && parameters[0].ParameterType == typeof(IDocumentStore)
+                            && parameters[1].ParameterType == typeof(string)
+                        select m;
+
+            var method = query.Single();
+            var generic = method.MakeGenericMethod(documentType);
+
+            generic.Invoke(null, new object[] { documentStore, indexName });
+        }
+
+        /// <summary>
         /// Create an index that allows to tag entities by their entity name.
         /// </summary>
         public static void CreateDocumentsByEntityNameIndex(this IDocumentStore documentStore, bool waitForNonStaleResults = true)
