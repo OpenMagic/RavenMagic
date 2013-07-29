@@ -138,6 +138,36 @@ namespace RavenMagic.Tests
             }
 
             [TestMethod]
+            public void ShouldThrowArgumentNullExceptionWhen_indexName_IsNull()
+            {
+                // Given
+                var store = new MemoryDocumentStore();
+
+                // When
+                Action action = () => store.ClearCollection<object>(indexName: null);
+
+                // Then
+                action
+                    .ShouldThrow<ArgumentNullException>()
+                    .WithMessage("Value cannot be null.\r\nParameter name: indexName");
+            }
+
+            [TestMethod]
+            public void ShouldThrowArgumentExceptionWhen_indexName_IsWhitespace()
+            {
+                // Given
+                var store = new MemoryDocumentStore();
+
+                // When
+                Action action = () => store.ClearCollection<object>(indexName: "");
+
+                // Then
+                action
+                    .ShouldThrow<ArgumentException>()
+                    .WithMessage("Value cannot be whitespace.\r\nParameter name: indexName");
+            }
+
+            [TestMethod]
             public void ShouldNotThrowExceptionDocumentStoreDoesNotHaveRequestedCollection()
             {
                 // Given
@@ -215,6 +245,37 @@ namespace RavenMagic.Tests
 
                 // Then
                 action.ShouldNotThrow<Exception>();
+            }
+        }
+
+        [TestClass]
+        public class CreateTemporaryIndex
+        {
+            [TestMethod]
+            public void ShouldThrowArgumentNullExceptionWhen_documentStore_IsNull()
+            {
+                // When
+                Action action = () => IDocumentStoreExtensions.CreateTemporaryIndex<object>(documentStore: null);
+
+                // Then
+                action.ShouldThrow<ArgumentNullException>().WithMessage("Value cannot be null.\r\nParameter name: documentStore");
+            }
+
+            [TestMethod]
+            public void ShouldCreateTemporaryIndexAndReturnIndexName()
+            {
+                // Given
+                var store = new MemoryDocumentStore(createDocumentsByEntityNameIndex: false);
+
+                store.DatabaseCommands.GetIndexes(0, 1024).Count().Should().Be(0, "because I'm testing the assumption a memory document documentStore has 0 indexes when created");
+
+                // When
+                var indexName = store.CreateTemporaryIndex<Product>();
+
+                // Then
+                var indexes = from i in store.DatabaseCommands.GetIndexes(0, 1024) select i.Name;
+
+                indexes.Should().BeEquivalentTo(new string[] { indexName });
             }
         }
 
@@ -458,6 +519,66 @@ namespace RavenMagic.Tests
         }
 
         [TestClass]
+        public class DeleteIndex
+        {
+            [TestMethod]
+            public void ShouldThrowArgumentNullExceptionWhen_documentStore_IsNull()
+            {
+                // When
+                Action action = () => IDocumentStoreExtensions.DeleteIndex(documentStore: null, indexName: "fake");
+
+                // Then
+                action.ShouldThrow<ArgumentNullException>().WithMessage("Value cannot be null.\r\nParameter name: documentStore");
+            }
+
+            [TestMethod]
+            public void ShouldThrowArgumentExceptionWhen_indexName_IsNull()
+            {
+                // Given
+                var store = new MemoryDocumentStore();
+
+                // When
+                Action action = () => store.DeleteIndex(indexName: null);
+
+                // Then
+                action
+                    .ShouldThrow<ArgumentNullException>()
+                    .WithMessage("Value cannot be null.\r\nParameter name: indexName");
+            }
+
+            [TestMethod]
+            public void ShouldThrowArgumentExceptionWhen_indexName_IsWhiteSpace()
+            {
+                // Given
+                var store = new MemoryDocumentStore();
+
+                // When
+                Action action = () => store.DeleteIndex(indexName: "");
+
+                // Then
+                action
+                    .ShouldThrow<ArgumentException>()
+                    .WithMessage("Value cannot be whitespace.\r\nParameter name: indexName");
+            }
+
+            [TestMethod]
+            public void ShouldDeleteIndex()
+            {
+                // Given
+                var store = new MemoryDocumentStore(createDocumentsByEntityNameIndex: false);
+                var indexName = store.CreateTemporaryIndex<Product>();
+
+                // When
+                store.DeleteIndex(indexName);
+
+                // Then
+                var indexes = store.DatabaseCommands.GetIndexes(0, 1024);
+
+                indexes.Count().Should().Be(0);
+            }
+        }
+
+        [TestClass]
         public class IsIndexStale : BaseTestClass
         {
             [TestMethod]
@@ -656,7 +777,7 @@ namespace RavenMagic.Tests
                 var store = new MemoryDocumentStore(waitForNonStaleResults: false);
                 var indexName = "ProductsIndex";
                 var fakeDocumentCount = 1000;
-                
+
                 StoreFakeProducts(store, fakeDocumentCount);
                 CreateProductsIndex(store, indexName);
                 ValidateIndexIsStale(store, indexName);

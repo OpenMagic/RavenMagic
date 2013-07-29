@@ -20,21 +20,38 @@ namespace RavenMagic
         /// <exception cref="System.ArgumentNullException">When <paramref name="documentStore"/> is null.</exception>
         public static void ClearCollection<T>(this IDocumentStore documentStore)
         {
-            documentStore.MustNotBeNull("documentStore");
+            var indexName = documentStore.CreateTemporaryIndex<T>();
 
-            //var indexName = "ClearCollection_" + typeof(T).Name;
-            var indexName = Guid.NewGuid().ToString();
-
-            documentStore.DatabaseCommands.PutIndex(indexName, new IndexDefinitionBuilder<T>
+            try
             {
-                Map = documents => documents.Select(entity => new { })
-            });
+                documentStore.ClearCollection<T>(indexName);
+            }
+            finally
+            {
+                documentStore.DeleteIndex(indexName);
+            }
+        }
+
+        /// <summary>
+        /// Deletes the collection for <typeparamref name="T"/>.
+        /// </summary>
+        /// <typeparam name="T">The document type of the collection to delete.</typeparam>
+        /// <param name="documentStore">The document store to remove collection from.</param>
+        /// <param name="indexName">The index to use for deleting the collection.</param>
+        /// <remarks>
+        /// <see cref="ClearCollection<T>"/> requires the index to be fresh. This method will
+        /// call <see cref="WaitForNonStaleResults"/> but if there is any doubt the index
+        /// will still be stale you should ensure the index is fresh before calling this method.
+        /// </remarks>
+        public static void ClearCollection<T>(this IDocumentStore documentStore, string indexName)
+        {
+            documentStore.MustNotBeNull("documentStore");
+            indexName.MustNotBeNullOrWhiteSpace("indexName");
 
             // Wait for indexing to complete. This method will probably only be used in unit tests so shouldn't be a problem.
             documentStore.WaitForNonStaleResults(indexName);
 
-            documentStore
-                .DatabaseCommands
+            documentStore.DatabaseCommands
                 .DeleteByIndex(
                     indexName,
                     new IndexQuery(),
@@ -88,20 +105,15 @@ namespace RavenMagic
         {
             documentStore.MustNotBeNull("documentStore");
 
-            var indexName = CreateTemporaryIndexForCollection<T>(documentStore);
+            var indexName = CreateTemporaryIndex<T>(documentStore);
 
             try
             {
                 documentStore.CorrectRavenClrTypeForCollection<T>(indexName);
             }
-            catch (Exception)
-            {
-                throw;
-            }
             finally
             {
-                // Remove the temporary index we created for the collection.
-                documentStore.DatabaseCommands.DeleteIndex(indexName);
+                documentStore.DeleteIndex(indexName);
             }
         }
 
@@ -178,7 +190,9 @@ namespace RavenMagic
             generic.Invoke(null, new object[] { documentStore });
         }
 
-        // todo: document
+        /// <summary>
+        /// Create an index that allows to tag entities by their entity name.
+        /// </summary>
         public static void CreateDocumentsByEntityNameIndex(this IDocumentStore documentStore, bool waitForNonStaleResults = true)
         {
             documentStore.MustNotBeNull("documentStore");
@@ -193,23 +207,39 @@ namespace RavenMagic
             }
         }
 
-        private static string CreateTemporaryIndexForCollection<T>(IDocumentStore documentStore)
+        /// <summary>
+        /// Creates a temporary index for a collection.
+        /// </summary>
+        /// <typeparam name="T">The document type to create the index for.</typeparam>
+        /// <param name="documentStore">The document store to create the index for.</param>
+        /// <returns>
+        /// The name of the created index.
+        /// </returns>
+        public static string CreateTemporaryIndex<T>(this IDocumentStore documentStore)
         {
+            documentStore.MustNotBeNull("documentStore");
+
             var indexName = Guid.NewGuid().ToString();
 
-            // Create an index for the collection.
-            documentStore.DatabaseCommands.PutIndex(
-                indexName,
-                new IndexDefinitionBuilder<T>
-                {
-                    Map = documents => documents.Select(entity => new { })
-                }
-            );
-
-            // Wait for indexing to finish.
-            documentStore.OpenSession().Advanced.LuceneQuery<object>(indexName).WaitForNonStaleResults().ToList();
+            documentStore.DatabaseCommands.PutIndex(indexName, new IndexDefinitionBuilder<T>
+            {
+                Map = documents => documents.Select(entity => new { })
+            });
 
             return indexName;
+        }
+
+        /// <summary>
+        /// Deletes the specified index.
+        /// </summary>
+        /// <param name="documentStore">The document store that contains the index.</param>
+        /// <param name="indexName">Name of the index to delete.</param>
+        public static void DeleteIndex(this IDocumentStore documentStore, string indexName)
+        {
+            documentStore.MustNotBeNull("documentStore");
+            indexName.MustNotBeNullOrWhiteSpace("indexName");
+
+            documentStore.DatabaseCommands.DeleteIndex(indexName);
         }
 
         /// <summary>
