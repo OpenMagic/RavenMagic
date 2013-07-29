@@ -138,7 +138,7 @@ namespace RavenMagic
 
             // The call to documentStore.DatabaseCommands.UpdateByIndex() expects the index will not be stale.
             documentStore.WaitForNonStaleResults(indexName);
-            
+
             var newRavenClrType = string.Format("{0}, {1}", typeof(T).FullName, typeof(T).Assembly.GetName().Name);
 
             documentStore.DatabaseCommands.UpdateByIndex(
@@ -177,7 +177,7 @@ namespace RavenMagic
 
             generic.Invoke(null, new object[] { documentStore });
         }
-        
+
         // todo: document
         public static void CreateDocumentsByEntityNameIndex(this IDocumentStore documentStore, bool waitForNonStaleResults = true)
         {
@@ -253,17 +253,16 @@ namespace RavenMagic
         /// </summary>
         /// <param name="documentStore">The document store that contains the index.</param>
         /// <param name="indexName">Name of the index to get up to date.</param>
-        public static void WaitForNonStaleResults(this IDocumentStore documentStore, string indexName)
+        /// <param name="maximumAttempts">The maximum number of attempts at waiting for index to be up to date.</param>
+        public static void WaitForNonStaleResults(this IDocumentStore documentStore, string indexName, int maximumAttempts = 1)
         {
             documentStore.MustNotBeNull("documentStore");
             indexName.MustNotBeNullOrWhiteSpace("indexName");
+            maximumAttempts.MustBeGreaterThan(0, "maximumAttempts");
 
             using (IDocumentSession session = documentStore.OpenSession())
             {
-                session
-                    .Query<object>(indexName)
-                    .Customize(x => x.WaitForNonStaleResults())
-                    .Any();
+                session.WaitForNonStaleResults(indexName, maximumAttempts);
             }
         }
     }

@@ -635,6 +635,21 @@ namespace RavenMagic.Tests
             }
 
             [TestMethod]
+            public void ShouldThrowArgumentOutOfRangeExceptionWhen_maximumAttempts_IsLessThanOne()
+            {
+                // Given
+                var store = new MemoryDocumentStore();
+
+                // When
+                Action action = () => store.WaitForNonStaleResults(indexName: "fake", maximumAttempts: 0);
+
+                // Then
+                action
+                    .ShouldThrow<ArgumentOutOfRangeException>()
+                    .WithMessage("Value must be greater than 0.\r\nParameter name: maximumAttempts\r\nActual value was 0.");
+            }
+
+            [TestMethod]
             public void ShouldEnsureIndexIsNotStale()
             {
                 // Given
@@ -651,6 +666,12 @@ namespace RavenMagic.Tests
 
                 // Then
                 store.IsIndexStale(indexName).Should().BeFalse();
+            }
+
+            [TestMethod]
+            public void ShouldThrowTimeoutExceptionIf_maximumAttempts_IsExceeded()
+            {
+                Assert.Inconclusive("todo");
             }
         }
     }
