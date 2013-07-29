@@ -262,6 +262,19 @@ namespace RavenMagic.Tests
             }
 
             [TestMethod]
+            public void ShouldThrowArgumentNullExceptionWhen_documentType_IsNull()
+            {
+                // Given
+                var store = new MemoryDocumentStore();
+
+                // When
+                Action action = () => store.CreateTemporaryIndex(documentType: null);
+
+                // Then
+                action.ShouldThrow<ArgumentNullException>().WithMessage("Value cannot be null.\r\nParameter name: documentType");
+            }
+
+            [TestMethod]
             public void ShouldCreateTemporaryIndexAndReturnIndexName()
             {
                 // Given
@@ -271,6 +284,21 @@ namespace RavenMagic.Tests
 
                 // When
                 var indexName = store.CreateTemporaryIndex<Product>();
+
+                // Then
+                var indexes = from i in store.DatabaseCommands.GetIndexes(0, 1024) select i.Name;
+
+                indexes.Should().BeEquivalentTo(new string[] { indexName });
+            }
+
+            [TestMethod]
+            public void ShouldCreateTemporaryIndexAndReturnIndexNameForDocumentType()
+            {
+                // Given
+                var store = new MemoryDocumentStore(createDocumentsByEntityNameIndex: false);
+
+                // When
+                var indexName = store.CreateTemporaryIndex(typeof(Product));
 
                 // Then
                 var indexes = from i in store.DatabaseCommands.GetIndexes(0, 1024) select i.Name;

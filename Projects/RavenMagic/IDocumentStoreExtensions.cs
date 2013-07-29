@@ -230,6 +230,27 @@ namespace RavenMagic
         }
 
         /// <summary>
+        /// Creates a temporary index for nominated document type.
+        /// </summary>
+        /// <param name="documentStore">The document store to create the index for.</param>
+        /// <param name="documentType">The document type to create the index for.</param>
+        /// <returns>
+        /// The name of the created index.
+        /// </returns>
+        public static string CreateTemporaryIndex(this IDocumentStore documentStore, Type documentType)
+        {
+            documentStore.MustNotBeNull("documentStore");
+            documentType.MustNotBeNull("documentType");
+
+            var method = typeof(IDocumentStoreExtensions).GetMethods().Single(m => m.Name == "CreateTemporaryIndex" && m.GetParameters().Count() == 1);
+            var generic = method.MakeGenericMethod(documentType);
+
+            var indexName = generic.Invoke(null, new object[] { documentStore });
+
+            return indexName.ToString();
+        }
+
+        /// <summary>
         /// Deletes the specified index.
         /// </summary>
         /// <param name="documentStore">The document store that contains the index.</param>
