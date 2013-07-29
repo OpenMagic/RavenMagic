@@ -327,16 +327,29 @@ namespace RavenMagic
         /// </summary>
         /// <param name="documentStore">The document store that contains the index.</param>
         /// <param name="indexName">Name of the index to get up to date.</param>
-        /// <param name="maximumAttempts">The maximum number of attempts at waiting for index to be up to date.</param>
-        public static void WaitForNonStaleResults(this IDocumentStore documentStore, string indexName, int maximumAttempts = 1)
+        public static void WaitForNonStaleResults(this IDocumentStore documentStore, string indexName)
         {
             documentStore.MustNotBeNull("documentStore");
             indexName.MustNotBeNullOrWhiteSpace("indexName");
-            maximumAttempts.MustBeGreaterThan(0, "maximumAttempts");
+
+            documentStore.WaitForNonStaleResults(indexName, IDocumentSessionExtensions.DefaultWaitTimeout);
+        }
+
+        /// <summary>
+        /// Waits for <see cref="indexName"/> to be up to date.
+        /// </summary>
+        /// <param name="documentStore">The document store that contains the index.</param>
+        /// <param name="indexName">Name of the index to get up to date.</param>
+        /// <param name="waitTimeout">Maximum time to wait before throwing timeout exception.</param>
+        public static void WaitForNonStaleResults(this IDocumentStore documentStore, string indexName, TimeSpan waitTimeout)
+        {
+            documentStore.MustNotBeNull("documentStore");
+            indexName.MustNotBeNullOrWhiteSpace("indexName");
+            waitTimeout.MustNotBeNull("waitTimeout");
 
             using (IDocumentSession session = documentStore.OpenSession())
             {
-                session.WaitForNonStaleResults(indexName, maximumAttempts);
+                session.WaitForNonStaleResults(indexName, TimeSpan.FromSeconds(15));
             }
         }
     }

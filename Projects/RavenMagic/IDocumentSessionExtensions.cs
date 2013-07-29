@@ -7,6 +7,12 @@ namespace RavenMagic
 {
     public static class IDocumentSessionExtensions
     {
+        static IDocumentSessionExtensions()
+        {
+            DefaultWaitTimeout = TimeSpan.FromSeconds(15);
+        }
+
+        public static TimeSpan DefaultWaitTimeout { get; set; }
         /// <summary>
         /// Determines if an index is stale.
         /// </summary>
@@ -29,44 +35,30 @@ namespace RavenMagic
         /// </summary>
         /// <param name="documentSession">The document session that contains the index.</param>
         /// <param name="indexName">Name of the index to get up to date.</param>
-        /// <param name="maximumAttempts">The maximum number of attempts at waiting for index to be up to date.</param>
-        public static void WaitForNonStaleResults(this IDocumentSession documentSession, string indexName, int maximumAttempts = 1)
+        public static void WaitForNonStaleResults(this IDocumentSession documentSession, string indexName)
         {
             documentSession.MustNotBeNull("documentSession");
             indexName.MustNotBeNullOrWhiteSpace("indexName");
-            maximumAttempts.MustBeGreaterThan(0, "maximumAttempts");
 
-            int attempt = 0;
-            TimeoutException timeoutException = null;
+            documentSession.WaitForNonStaleResults(indexName, DefaultWaitTimeout);
+        }
 
-            while (documentSession.IsIndexStale(indexName))
-            {
-                attempt += 1;
+        /// <summary>
+        /// Waits for <see cref="indexName"/> to be up to date.
+        /// </summary>
+        /// <param name="documentSession">The document session that contains the index.</param>
+        /// <param name="indexName">Name of the index to get up to date.</param>
+        /// <param name="waitTimeout">Maximum time to wait before throwing timeout exception.</param>
+        public static void WaitForNonStaleResults(this IDocumentSession documentSession, string indexName, TimeSpan waitTimeout)
+        {
+            documentSession.MustNotBeNull("documentSession");
+            indexName.MustNotBeNullOrWhiteSpace("indexName");
+            waitTimeout.MustNotBeNull("waitTimeout");
 
-                if (attempt > maximumAttempts)
-                {
-                    if (maximumAttempts == 1)
-                    {
-                        throw timeoutException;
-                    }
-                    else
-                    {
-                        throw new TimeoutException(string.Format("After {0} attempts {1} index is still stale.", maximumAttempts, indexName), timeoutException);
-                    }
-                }
-
-                try
-                {
-                    documentSession
+            documentSession
                         .Query<object>(indexName)
-                        .Customize(x => x.WaitForNonStaleResults())
+                        .Customize(x => x.WaitForNonStaleResults(waitTimeout))
                         .Any();
-                }
-                catch (TimeoutException ex)
-                {
-                    timeoutException = ex;
-                }
-            }
         }
     }
 }
