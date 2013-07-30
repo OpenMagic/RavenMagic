@@ -58,12 +58,27 @@ namespace RavenMagic
             indexName.MustNotBeNullOrWhiteSpace("indexName");
             waitTimeout.MustNotBeNull("waitTimeout");
 
-            Log.Debug(string.Format("WaitForNonStaleResults(indexName: {0}, waitTimeout: {1}", indexName, waitTimeout));
+            if (!documentSession.IsIndexStale(indexName))
+            {
+                Log.Debug(string.Format("{0} index is not stale.", indexName, waitTimeout));
+                return;
+            }
+
+            Log.Debug(string.Format("Waiting {1} for {0} to have no stale results...", indexName, waitTimeout));
 
             documentSession
                         .Query<object>(indexName)
                         .Customize(x => x.WaitForNonStaleResults(waitTimeout))
                         .Any();
+
+            if (documentSession.IsIndexStale(indexName))
+            {
+                Log.Debug(string.Format("After waiting {1} {0} index is still stale..", indexName, waitTimeout));
+            }
+            else
+            {
+                Log.Debug(string.Format("{0} index is now fresh.", indexName));
+            }
         }
     }
 }
