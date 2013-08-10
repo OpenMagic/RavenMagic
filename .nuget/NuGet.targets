@@ -3,6 +3,9 @@
     <PropertyGroup>
         <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">$(MSBuildProjectDirectory)\..\</SolutionDir>
         
+        <!-- Package sources used to restore packages. By default will used the registered sources under %APPDATA%\NuGet\NuGet.Config -->
+        <PackageSources>"http://www.myget.org/F/timpmurphy/;https://nuget.org/api/v2/"</PackageSources>
+
         <!-- Enable the restore command to run before builds -->
         <RestorePackages Condition="  '$(RestorePackages)' == '' ">false</RestorePackages>
 
@@ -16,15 +19,6 @@
         <DownloadNuGetExe Condition=" '$(DownloadNuGetExe)' == '' ">false</DownloadNuGetExe>
     </PropertyGroup>
     
-    <ItemGroup Condition=" '$(PackageSources)' == '' ">
-        <!-- Package sources used to restore packages. By default, registered sources under %APPDATA%\NuGet\NuGet.Config will be used -->
-        <!-- The official NuGet package source (https://nuget.org/api/v2/) will be excluded if package sources are specified and it does not appear in the list -->
-        <!--
-            <PackageSource Include="https://nuget.org/api/v2/" />
-            <PackageSource Include="https://my-nuget-source/nuget/" />
-        -->
-    </ItemGroup>
-
     <PropertyGroup Condition=" '$(OS)' == 'Windows_NT'">
         <!-- Windows specific commands -->
         <NuGetToolsPath>$([System.IO.Path]::Combine($(SolutionDir), ".nuget"))</NuGetToolsPath>
