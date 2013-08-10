@@ -85,7 +85,7 @@ namespace RavenMagic
             jsonDocument.Metadata[RavenConstants.Metadata.RavenClrType] = newRavenClrType;
 
             // Save the changed metadata.
-            documentStore.DatabaseCommands.Put(id, jsonDocument.Metadata.Value<Guid?>(RavenConstants.Metadata.etag), jsonDocument.DataAsJson, jsonDocument.Metadata);
+            documentStore.DatabaseCommands.Put(id, jsonDocument.Metadata.Value<Etag>(RavenConstants.Metadata.etag), jsonDocument.DataAsJson, jsonDocument.Metadata);
         }
 
         /// <summary>
