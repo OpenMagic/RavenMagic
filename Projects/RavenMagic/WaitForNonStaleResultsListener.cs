@@ -34,8 +34,6 @@ namespace RavenMagic
         /// </summary>
         public void BeforeQueryExecuted(IDocumentQueryCustomization queryCustomization)
         {
-            queryCustomization.MustNotBeNull("queryCustomization");
-
             if (WaitTimeout.HasValue)
             {
                 queryCustomization.WaitForNonStaleResults(WaitTimeout.Value);

@@ -46,7 +46,7 @@ namespace RavenMagic.Tests
                 Action action = () => listener.BeforeQueryExecuted(null);
 
                 // Then
-                action.ShouldThrow<ArgumentNullException>().WithMessage("Value cannot be null.\r\nParameter name: queryCustomization");
+                action.ShouldThrow<ArgumentNullException>().And.ParamName.Should().Be("queryCustomization");
             }
 
             [TestMethod]

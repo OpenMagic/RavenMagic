@@ -19,7 +19,7 @@ namespace RavenMagic.Tests
                 // Then
                 action
                     .ShouldThrow<ArgumentNullException>()
-                    .WithMessage("Value cannot be null.\r\nParameter name: documentSession");
+                    .And.ParamName.Should().Be("documentSession");
             }
 
             [TestMethod]
@@ -34,7 +34,7 @@ namespace RavenMagic.Tests
                 // Then
                 action
                     .ShouldThrow<ArgumentNullException>()
-                    .WithMessage("Value cannot be null.\r\nParameter name: indexName");
+                    .And.ParamName.Should().Be("indexName");
             }
 
             [TestMethod]
@@ -105,7 +105,7 @@ namespace RavenMagic.Tests
                 // Then
                 action
                     .ShouldThrow<ArgumentNullException>()
-                    .WithMessage("Value cannot be null.\r\nParameter name: documentSession");
+                    .And.ParamName.Should().Be("documentSession");
             }
 
             [TestMethod]
@@ -120,7 +120,7 @@ namespace RavenMagic.Tests
                 // Then
                 action
                     .ShouldThrow<ArgumentNullException>()
-                    .WithMessage("Value cannot be null.\r\nParameter name: indexName");
+                    .And.ParamName.Should().Be("indexName");
             }
 
             [TestMethod]

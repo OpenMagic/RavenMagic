@@ -22,7 +22,7 @@ namespace RavenMagic.Tests
                 // Then
                 action
                     .ShouldThrow<ArgumentNullException>()
-                    .WithMessage("Value cannot be null.\r\nParameter name: documentStore");
+                    .And.ParamName.Should().Be("documentStore");
             }
 
             [TestMethod]
@@ -37,7 +37,7 @@ namespace RavenMagic.Tests
                 // Then
                 action
                     .ShouldThrow<ArgumentNullException>()
-                    .WithMessage("Value cannot be null.\r\nParameter name: id");
+                    .And.ParamName.Should().Be("id");
             }
 
             [TestMethod]
@@ -67,7 +67,7 @@ namespace RavenMagic.Tests
                 // Then
                 action
                     .ShouldThrow<ArgumentNullException>()
-                    .WithMessage("Value cannot be null.\r\nParameter name: newRavenClrType");
+                    .And.ParamName.Should().Be("newRavenClrType");
             }
 
             [TestMethod]
@@ -134,7 +134,7 @@ namespace RavenMagic.Tests
                 // Then
                 action
                     .ShouldThrow<ArgumentNullException>()
-                    .WithMessage("Value cannot be null.\r\nParameter name: documentStore");
+                    .And.ParamName.Should().Be("documentStore");
             }
 
             [TestMethod]
@@ -149,7 +149,7 @@ namespace RavenMagic.Tests
                 // Then
                 action
                     .ShouldThrow<ArgumentNullException>()
-                    .WithMessage("Value cannot be null.\r\nParameter name: indexName");
+                    .And.ParamName.Should().Be("indexName");
             }
 
             [TestMethod]
@@ -213,7 +213,7 @@ namespace RavenMagic.Tests
                 Action action = () => IDocumentStoreExtensions.CreateDocumentsByEntityNameIndex(null);
 
                 // Then
-                action.ShouldThrow<ArgumentNullException>().WithMessage("Value cannot be null.\r\nParameter name: documentStore");
+                action.ShouldThrow<ArgumentNullException>().And.ParamName.Should().Be("documentStore");
             }
 
             [TestMethod]
@@ -258,7 +258,7 @@ namespace RavenMagic.Tests
                 Action action = () => IDocumentStoreExtensions.CreateTemporaryIndex<object>(documentStore: null);
 
                 // Then
-                action.ShouldThrow<ArgumentNullException>().WithMessage("Value cannot be null.\r\nParameter name: documentStore");
+                action.ShouldThrow<ArgumentNullException>().And.ParamName.Should().Be("documentStore");
             }
 
             [TestMethod]
@@ -271,7 +271,7 @@ namespace RavenMagic.Tests
                 Action action = () => store.CreateTemporaryIndex(documentType: null);
 
                 // Then
-                action.ShouldThrow<ArgumentNullException>().WithMessage("Value cannot be null.\r\nParameter name: documentType");
+                action.ShouldThrow<ArgumentNullException>().And.ParamName.Should().Be("documentType");
             }
 
             [TestMethod]
@@ -319,7 +319,7 @@ namespace RavenMagic.Tests
                 // Then
                 action
                     .ShouldThrow<ArgumentNullException>()
-                    .WithMessage("Value cannot be null.\r\nParameter name: documentStore");
+                    .And.ParamName.Should().Be("documentStore");
             }
 
             [TestMethod]
@@ -334,7 +334,7 @@ namespace RavenMagic.Tests
                 // Then
                 action
                     .ShouldThrow<ArgumentNullException>()
-                    .WithMessage("Value cannot be null.\r\nParameter name: indexName");
+                    .And.ParamName.Should().Be("indexName");
             }
 
             [TestMethod]
@@ -475,7 +475,7 @@ namespace RavenMagic.Tests
                 // Then
                 action
                     .ShouldThrow<ArgumentNullException>()
-                    .WithMessage("Value cannot be null.\r\nParameter name: documentStore");
+                    .And.ParamName.Should().Be("documentStore");
             }
 
             [TestMethod]
@@ -490,7 +490,7 @@ namespace RavenMagic.Tests
                 // Then
                 action
                     .ShouldThrow<ArgumentNullException>()
-                    .WithMessage("Value cannot be null.\r\nParameter name: documentType");
+                    .And.ParamName.Should().Be("documentType");
             }
 
             [TestMethod]
@@ -558,7 +558,7 @@ namespace RavenMagic.Tests
                 // Then
                 action
                     .ShouldThrow<ArgumentNullException>()
-                    .WithMessage("Value cannot be null.\r\nParameter name: documentStore");
+                    .And.ParamName.Should().Be("documentStore");
             }
 
             [TestMethod]
@@ -573,7 +573,7 @@ namespace RavenMagic.Tests
                 // Then
                 action
                     .ShouldThrow<ArgumentNullException>()
-                    .WithMessage("Value cannot be null.\r\nParameter name: documentType");
+                    .And.ParamName.Should().Be("documentType");
             }
 
             [TestMethod]
@@ -588,7 +588,7 @@ namespace RavenMagic.Tests
                 // Then
                 action
                     .ShouldThrow<ArgumentNullException>()
-                    .WithMessage("Value cannot be null.\r\nParameter name: indexName");
+                    .And.ParamName.Should().Be("indexName");
             }
 
             [TestMethod]
@@ -673,7 +673,7 @@ namespace RavenMagic.Tests
                 Action action = () => IDocumentStoreExtensions.DeleteIndex(documentStore: null, indexName: "fake");
 
                 // Then
-                action.ShouldThrow<ArgumentNullException>().WithMessage("Value cannot be null.\r\nParameter name: documentStore");
+                action.ShouldThrow<ArgumentNullException>().And.ParamName.Should().Be("documentStore");
             }
 
             [TestMethod]
@@ -688,7 +688,7 @@ namespace RavenMagic.Tests
                 // Then
                 action
                     .ShouldThrow<ArgumentNullException>()
-                    .WithMessage("Value cannot be null.\r\nParameter name: indexName");
+                    .And.ParamName.Should().Be("indexName");
             }
 
             [TestMethod]
@@ -735,7 +735,7 @@ namespace RavenMagic.Tests
                 // Then
                 action
                     .ShouldThrow<ArgumentNullException>()
-                    .WithMessage("Value cannot be null.\r\nParameter name: documentStore");
+                    .And.ParamName.Should().Be("documentStore");
             }
 
             [TestMethod]
@@ -750,7 +750,7 @@ namespace RavenMagic.Tests
                 // Then
                 action
                     .ShouldThrow<ArgumentNullException>()
-                    .WithMessage("Value cannot be null.\r\nParameter name: indexName");
+                    .And.ParamName.Should().Be("indexName");
             }
 
             [TestMethod]
@@ -817,7 +817,7 @@ namespace RavenMagic.Tests
                 // Then
                 action
                     .ShouldThrow<ArgumentNullException>()
-                    .WithMessage("Value cannot be null.\r\nParameter name: documentStore");
+                    .And.ParamName.Should().Be("documentStore");
             }
 
             [TestMethod]
@@ -867,7 +867,7 @@ namespace RavenMagic.Tests
                 // Then
                 action
                     .ShouldThrow<ArgumentNullException>()
-                    .WithMessage("Value cannot be null.\r\nParameter name: documentStore");
+                    .And.ParamName.Should().Be("documentStore");
             }
 
             [TestMethod]
@@ -882,7 +882,7 @@ namespace RavenMagic.Tests
                 // Then
                 action
                     .ShouldThrow<ArgumentNullException>()
-                    .WithMessage("Value cannot be null.\r\nParameter name: indexName");
+                    .And.ParamName.Should().Be("indexName");
             }
 
             [TestMethod]

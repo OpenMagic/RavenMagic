@@ -23,7 +23,6 @@ namespace RavenMagic
         /// <param name="indexName">Name of the index to test.</param>
         public static bool IsIndexStale(this IDocumentSession documentSession, string indexName)
         {
-            documentSession.MustNotBeNull("documentSession");
             indexName.MustNotBeNullOrWhiteSpace("indexName");
 
             RavenQueryStatistics stats = null;
@@ -40,7 +39,6 @@ namespace RavenMagic
         /// <param name="indexName">Name of the index to get up to date.</param>
         public static void WaitForNonStaleResults(this IDocumentSession documentSession, string indexName)
         {
-            documentSession.MustNotBeNull("documentSession");
             indexName.MustNotBeNullOrWhiteSpace("indexName");
 
             documentSession.WaitForNonStaleResults(indexName, DefaultWaitTimeout);
@@ -54,9 +52,7 @@ namespace RavenMagic
         /// <param name="waitTimeout">Maximum time to wait before throwing timeout exception.</param>
         public static void WaitForNonStaleResults(this IDocumentSession documentSession, string indexName, TimeSpan waitTimeout)
         {
-            documentSession.MustNotBeNull("documentSession");
             indexName.MustNotBeNullOrWhiteSpace("indexName");
-            waitTimeout.MustNotBeNull("waitTimeout");
 
             if (!documentSession.IsIndexStale(indexName))
             {

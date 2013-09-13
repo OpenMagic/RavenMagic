@@ -45,7 +45,6 @@ namespace RavenMagic
         /// </remarks>
         public static void ClearCollection<T>(this IDocumentStore documentStore, string indexName)
         {
-            documentStore.MustNotBeNull("documentStore");
             indexName.MustNotBeNullOrWhiteSpace("indexName");
 
             // Wait for indexing to complete. This method will probably only be used in unit tests so shouldn't be a problem.
@@ -70,7 +69,6 @@ namespace RavenMagic
         /// </remarks>
         public static void ChangeRavenClrTypeForDocument(this IDocumentStore documentStore, string id, string newRavenClrType)
         {
-            documentStore.MustNotBeNull("documentStore");
             id.MustNotBeNullOrWhiteSpace("id");
             newRavenClrType.MustNotBeNullOrWhiteSpace("newRavenClrType");
 
@@ -103,8 +101,6 @@ namespace RavenMagic
         /// </remarks>
         public static void CorrectRavenClrTypeForCollection<T>(this IDocumentStore documentStore)
         {
-            documentStore.MustNotBeNull("documentStore");
-
             var indexName = CreateTemporaryIndex<T>(documentStore);
 
             try
@@ -145,7 +141,6 @@ namespace RavenMagic
         /// </remarks>
         public static void CorrectRavenClrTypeForCollection<T>(this IDocumentStore documentStore, string indexName)
         {
-            documentStore.MustNotBeNull("documentStore");
             indexName.MustNotBeNullOrWhiteSpace("indexName");
 
             // The call to documentStore.DatabaseCommands.UpdateByIndex() expects the index will not be stale.
@@ -181,9 +176,6 @@ namespace RavenMagic
         /// </summary>
         public static void CorrectRavenClrTypeForCollection(this IDocumentStore documentStore, Type documentType)
         {
-            documentStore.MustNotBeNull("documentStore");
-            documentType.MustNotBeNull("documentType");
-
             var method = typeof(IDocumentStoreExtensions).GetMethods().Single(m => m.Name == "CorrectRavenClrTypeForCollection" && m.GetParameters().Count() == 1);
             var generic = method.MakeGenericMethod(documentType);
 
@@ -195,8 +187,6 @@ namespace RavenMagic
         /// </summary>
         public static void CorrectRavenClrTypeForCollection(this IDocumentStore documentStore, Type documentType, string indexName)
         {
-            documentStore.MustNotBeNull("documentStore");
-            documentType.MustNotBeNull("documentType");
             indexName.MustNotBeNullOrWhiteSpace("indexName");
 
             var query = from m in typeof(IDocumentStoreExtensions).GetMethods()
@@ -218,8 +208,6 @@ namespace RavenMagic
         /// </summary>
         public static void CreateDocumentsByEntityNameIndex(this IDocumentStore documentStore, bool waitForNonStaleResults = true)
         {
-            documentStore.MustNotBeNull("documentStore");
-
             var documentsIndex = new RavenDocumentsByEntityName();
 
             documentStore.ExecuteIndex(documentsIndex);
@@ -240,8 +228,6 @@ namespace RavenMagic
         /// </returns>
         public static string CreateTemporaryIndex<T>(this IDocumentStore documentStore)
         {
-            documentStore.MustNotBeNull("documentStore");
-
             var indexName = Guid.NewGuid().ToString();
 
             documentStore.DatabaseCommands.PutIndex(indexName, new IndexDefinitionBuilder<T>
@@ -262,9 +248,6 @@ namespace RavenMagic
         /// </returns>
         public static string CreateTemporaryIndex(this IDocumentStore documentStore, Type documentType)
         {
-            documentStore.MustNotBeNull("documentStore");
-            documentType.MustNotBeNull("documentType");
-
             var method = typeof(IDocumentStoreExtensions).GetMethods().Single(m => m.Name == "CreateTemporaryIndex" && m.GetParameters().Count() == 1);
             var generic = method.MakeGenericMethod(documentType);
 
@@ -280,7 +263,6 @@ namespace RavenMagic
         /// <param name="indexName">Name of the index to delete.</param>
         public static void DeleteIndex(this IDocumentStore documentStore, string indexName)
         {
-            documentStore.MustNotBeNull("documentStore");
             indexName.MustNotBeNullOrWhiteSpace("indexName");
 
             documentStore.DatabaseCommands.DeleteIndex(indexName);
@@ -293,7 +275,6 @@ namespace RavenMagic
         /// <param name="indexName">Name of the index to test.</param>
         public static bool IsIndexStale(this IDocumentStore documentStore, string indexName)
         {
-            documentStore.MustNotBeNull("documentStore");
             indexName.MustNotBeNullOrWhiteSpace("indexName");
 
             using (var session = documentStore.OpenSession())
@@ -312,8 +293,6 @@ namespace RavenMagic
         /// </remarks>
         public static IEnumerable<string> QueryCollections(this IDocumentStore documentStore)
         {
-            documentStore.MustNotBeNull("documentStore");
-
             documentStore.CreateDocumentsByEntityNameIndex();
 
             // Get the collection names.
@@ -329,7 +308,6 @@ namespace RavenMagic
         /// <param name="indexName">Name of the index to get up to date.</param>
         public static void WaitForNonStaleResults(this IDocumentStore documentStore, string indexName)
         {
-            documentStore.MustNotBeNull("documentStore");
             indexName.MustNotBeNullOrWhiteSpace("indexName");
 
             documentStore.WaitForNonStaleResults(indexName, IDocumentSessionExtensions.DefaultWaitTimeout);
@@ -343,9 +321,7 @@ namespace RavenMagic
         /// <param name="waitTimeout">Maximum time to wait before throwing timeout exception.</param>
         public static void WaitForNonStaleResults(this IDocumentStore documentStore, string indexName, TimeSpan waitTimeout)
         {
-            documentStore.MustNotBeNull("documentStore");
             indexName.MustNotBeNullOrWhiteSpace("indexName");
-            waitTimeout.MustNotBeNull("waitTimeout");
 
             using (IDocumentSession session = documentStore.OpenSession())
             {
