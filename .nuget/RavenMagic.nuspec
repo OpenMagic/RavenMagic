@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<package >
+
+    <metadata>
+
+        <id>RavenMagic</id>
+        <version>$version$</version>
+        <title>RavenMagic</title>
+        <authors>Tim Murphy</authors>
+        <owners>Tim Murphy</owners>
+        <licenseUrl>https://github.com/RavenMagic/RavenMagic/blob/master/LICENSE.txt</licenseUrl>
+        <projectUrl>https://github.com/RavenMagic/RavenMagic</projectUrl>
+        <requireLicenseAcceptance>false</requireLicenseAcceptance>
+        <description>BDD Framework for .NET</description>
+        <copyright>Copyright (c) 2013-2014 Tim Murphy</copyright>
+
+        <dependencies>
+            <group>
+                <dependency id="OpenMagic" />
+                <dependency id="Common.Logging" version="2.1.2"/>
+                <dependency id="RavenDB.Client" version="2.0.2380"/>
+                <dependency id="RavenDB.Database" version="2.0.2380"/>
+                <dependency id="RavenDB.Embedded" version="2.0.2380"/>
+            </group>
+        </dependencies>
+
+    </metadata>
+
+    <files>
+
+        <file src="..\Projects\RavenMagic\bin\Release\RavenMagic.*" target="lib/net40"/>
+
+    </files>
+
+</package>

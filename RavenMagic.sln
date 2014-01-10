@@ -8,6 +8,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{8A8605
 		.nuget\NuGet.Config = .nuget\NuGet.Config
 		.nuget\NuGet.exe = .nuget\NuGet.exe
 		.nuget\NuGet.targets = .nuget\NuGet.targets
+		.nuget\RavenMagic.nuspec = .nuget\RavenMagic.nuspec
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{FD62CCA0-F6A8-41B4-BB36-3DFEEB0FDCFD}"
@@ -19,6 +20,11 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RavenMagic", "Projects\RavenMagic\RavenMagic.csproj", "{8A4A7F26-F9CF-4A1F-A4DD-ECB8DC435608}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RavenMagic.Tests", "Projects\RavenMagic.Tests\RavenMagic.Tests.csproj", "{EB7E49BF-0734-493B-B297-CD712DBFA2DF}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Scripts", "Scripts", "{10DDA887-4054-493A-9C35-A1C72C59F876}"
+	ProjectSection(SolutionItems) = preProject
+		Scripts\MyGet.bat = Scripts\MyGet.bat
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -40,6 +46,7 @@ Global
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{8A860546-98E0-4610-8E46-01041C3C9936} = {FD62CCA0-F6A8-41B4-BB36-3DFEEB0FDCFD}
+		{10DDA887-4054-493A-9C35-A1C72C59F876} = {FD62CCA0-F6A8-41B4-BB36-3DFEEB0FDCFD}
 	EndGlobalSection
 	GlobalSection(TestCaseManagementSettings) = postSolution
 		CategoryFile = RavenMagic.vsmdi
