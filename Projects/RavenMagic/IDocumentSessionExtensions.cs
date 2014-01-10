@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq;
-using Common.Logging;
 using OpenMagic;
 using Raven.Client;
 
@@ -8,7 +7,6 @@ namespace RavenMagic
 {
     public static class IDocumentSessionExtensions
     {
-        private static readonly ILog Log = LogManager.GetCurrentClassLogger();
         public static TimeSpan DefaultWaitTimeout { get; set; }
 
         static IDocumentSessionExtensions()
@@ -56,25 +54,13 @@ namespace RavenMagic
 
             if (!documentSession.IsIndexStale(indexName))
             {
-                Log.Debug(string.Format("{0} index is not stale.", indexName, waitTimeout));
                 return;
             }
-
-            Log.Debug(string.Format("Waiting {1} for {0} to have no stale results...", indexName, waitTimeout));
 
             documentSession
                         .Query<object>(indexName)
                         .Customize(x => x.WaitForNonStaleResults(waitTimeout))
                         .Any();
-
-            if (documentSession.IsIndexStale(indexName))
-            {
-                Log.Debug(string.Format("After waiting {1} {0} index is still stale..", indexName, waitTimeout));
-            }
-            else
-            {
-                Log.Debug(string.Format("{0} index is now fresh.", indexName));
-            }
         }
     }
 }

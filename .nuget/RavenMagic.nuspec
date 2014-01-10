@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<package >
+
+    <metadata>
+
+        <id>RavenMagic</id>
+        <version>$version$</version>
+        <title>RavenMagic</title>
+        <authors>Tim Murphy</authors>
+        <owners>Tim Murphy</owners>
+        <licenseUrl>https://github.com/RavenMagic/RavenMagic/blob/master/LICENSE.txt</licenseUrl>
+        <projectUrl>https://github.com/RavenMagic/RavenMagic</projectUrl>
+        <requireLicenseAcceptance>false</requireLicenseAcceptance>
+        <description>Collection of utility classes for RavenDB</description>
+        <copyright>Copyright (c) 2013-2014 Tim Murphy</copyright>
+
+        <dependencies>
+            <group>
+                <dependency id="OpenMagic" />
+                <dependency id="RavenDB.Client" version="2.0.2380"/>
+                <dependency id="RavenDB.Database" version="2.0.2380"/>
+                <dependency id="RavenDB.Embedded" version="2.0.2380"/>
+            </group>
+        </dependencies>
+
+    </metadata>
+
+    <files>
+
+        <file src="..\Projects\RavenMagic\bin\Release\RavenMagic.*" target="lib/net40"/>
+
+    </files>
+
+</package>
