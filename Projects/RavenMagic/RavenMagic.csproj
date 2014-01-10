@@ -39,9 +39,9 @@
       <HintPath>..\..\packages\NullGuard.Fody.1.1.0.0\Lib\portable-net4+sl4+wp7+win8+MonoAndroid16+MonoTouch40\NullGuard.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="OpenMagic, Version=0.1.32.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="OpenMagic, Version=0.1.33.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\OpenMagic.0.1.32.0\lib\net40\OpenMagic.dll</HintPath>
+      <HintPath>..\..\packages\OpenMagic.0.1.33.0\lib\net40\OpenMagic.dll</HintPath>
     </Reference>
     <Reference Include="Raven.Abstractions">
       <HintPath>..\..\packages\RavenDB.Database.2.0.2380\lib\net40\Raven.Abstractions.dll</HintPath>

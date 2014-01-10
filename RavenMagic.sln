@@ -24,6 +24,9 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Scripts", "Scripts", "{10DDA887-4054-493A-9C35-A1C72C59F876}"
 	ProjectSection(SolutionItems) = preProject
 		Scripts\MyGet.bat = Scripts\MyGet.bat
+		Scripts\MyGetAndPause.bat = Scripts\MyGetAndPause.bat
+		Scripts\Publish.bat = Scripts\Publish.bat
+		Scripts\PublishAndPause.bat = Scripts\PublishAndPause.bat
 	EndProjectSection
 EndProject
 Global
