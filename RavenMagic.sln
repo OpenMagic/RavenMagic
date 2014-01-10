@@ -38,6 +38,9 @@ Global
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{8A860546-98E0-4610-8E46-01041C3C9936} = {FD62CCA0-F6A8-41B4-BB36-3DFEEB0FDCFD}
+	EndGlobalSection
 	GlobalSection(TestCaseManagementSettings) = postSolution
 		CategoryFile = RavenMagic.vsmdi
 	EndGlobalSection
