@@ -17,9 +17,9 @@
         <dependencies>
             <group>
                 <dependency id="OpenMagic" version="0.3.2.0" />
-                <dependency id="RavenDB.Client" version="2.0.2380"/>
-                <dependency id="RavenDB.Database" version="2.0.2380"/>
-                <dependency id="RavenDB.Embedded" version="2.0.2380"/>
+                <dependency id="RavenDB.Client" version="2.5.2879"/>
+                <dependency id="RavenDB.Database" version="2.5.2879"/>
+                <dependency id="RavenDB.Embedded" version="2.5.2879"/>
             </group>
         </dependencies>
 
@@ -27,7 +27,7 @@
 
     <files>
 
-        <file src="..\Projects\RavenMagic\bin\Release\RavenMagic.*" target="lib/net40"/>
+        <file src="..\Projects\RavenMagic\bin\Release\RavenMagic.*" target="lib/net45"/>
 
     </files>
 
