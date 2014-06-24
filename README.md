@@ -3,4 +3,4 @@ RavenMagic
 
 Collection of utility classes for RavenDB.
 
-[![timpmurphy MyGet Build Status](https://www.myget.org/BuildSource/Badge/timpmurphy?identifier=dc788048-3cb4-44d3-a956-6dca50be513c)](https://www.myget.org/)
+[![timpmurphy MyGet Build Status](https://www.myget.org/BuildSource/Badge/timpmurphy?identifier=1c058400-ee19-489c-89d8-d29e11bab91a)](https://www.myget.org/)
