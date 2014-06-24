@@ -28,9 +28,10 @@ if not "%PackageVersion%" == "" (
 
 echo Restoring packages...
 echo -------------------------------
-rem Packages must be explicity restored otherwise NullGuard.Fody does not run.
+rem Must be explicity install NullGuard.Fody otherwise it does not get called during compile.
 echo.
-.nuget\nuget restore -PackagesDirectory .\Packages
+.nuget\nuget install NullGuard.Fody -OutputDirectory .\Packages -NonInteractive
+
 if not "%errorlevel%" == "0" goto Error
 echo.
 echo.
