@@ -21,7 +21,7 @@ if not "%errorlevel%" == "0" exit %errorlevel%
 echo.
 echo Merging develop into master...
 echo.
-git merge test
+git merge develop
 if not "%errorlevel%" == "0" exit %errorlevel%
 
 echo.
@@ -34,4 +34,6 @@ echo.
 echo Switching back to develop...
 echo.
 git checkout develop
-exit %errorlevel%
+if not "%errorlevel%" == "0" exit %errorlevel%
+
+exit 0
