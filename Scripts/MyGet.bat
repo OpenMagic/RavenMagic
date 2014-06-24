@@ -30,7 +30,7 @@ echo Restoring packages...
 echo -------------------------------
 rem Must be explicity install NullGuard.Fody otherwise it does not get called during compile.
 echo.
-.nuget\nuget install NullGuard.Fody -OutputDirectory .\Packages -NonInteractive
+.nuget\nuget install NullGuard.Fody -OutputDirectory .\packages -NonInteractive
 
 if not "%errorlevel%" == "0" goto Error
 echo.
