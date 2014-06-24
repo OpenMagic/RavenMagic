@@ -1,16 +1,14 @@
 ﻿using System;
-using System.Linq;
 using FluentAssertions;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Xunit;
 
 namespace RavenMagic.Tests
 {
     public class IDocumentSessionExtensionsTests
     {
-        [TestClass]
         public class IsIndexStale : BaseTestClass
         {
-            [TestMethod]
+            [Fact]
             public void ShouldThrowArgumentNullExceptionWhen_documentSession_IsNull()
             {
                 // When
@@ -22,7 +20,7 @@ namespace RavenMagic.Tests
                     .And.ParamName.Should().Be("documentSession");
             }
 
-            [TestMethod]
+            [Fact]
             public void ShouldThrowArgumentExceptionWhen_indexName_IsNull()
             {
                 // Given
@@ -37,7 +35,7 @@ namespace RavenMagic.Tests
                     .And.ParamName.Should().Be("indexName");
             }
 
-            [TestMethod]
+            [Fact]
             public void ShouldThrowArgumentExceptionWhen_indexName_IsWhiteSpace()
             {
                 // Given
@@ -52,7 +50,7 @@ namespace RavenMagic.Tests
                     .WithMessage("Value cannot be whitespace.\r\nParameter name: indexName");
             }
 
-            [TestMethod]
+            [Fact]
             public void ShouldReturnTrueWhenTheIndexIsStale()
             {
                 // Given
@@ -72,7 +70,7 @@ namespace RavenMagic.Tests
                 isStale.Should().BeTrue();
             }
 
-            [TestMethod]
+            [Fact]
             public void ShouldReturnFalseWhenTheIndexIsNotStale()
             {
                 // Given
@@ -93,10 +91,9 @@ namespace RavenMagic.Tests
             }
         }
 
-        [TestClass]
         public class WaitForNonStaleResults : BaseTestClass
         {
-            [TestMethod]
+            [Fact]
             public void ShouldThrowArgumentNullExceptionWhen_documentStore_IsNull()
             {
                 // When
@@ -108,7 +105,7 @@ namespace RavenMagic.Tests
                     .And.ParamName.Should().Be("documentSession");
             }
 
-            [TestMethod]
+            [Fact]
             public void ShouldThrowArgumentExceptionWhen_indexName_IsNull()
             {
                 // Given
@@ -123,7 +120,7 @@ namespace RavenMagic.Tests
                     .And.ParamName.Should().Be("indexName");
             }
 
-            [TestMethod]
+            [Fact]
             public void ShouldThrowArgumentExceptionWhen_indexName_IsWhiteSpace()
             {
                 // Given
@@ -138,7 +135,7 @@ namespace RavenMagic.Tests
                     .WithMessage("Value cannot be whitespace.\r\nParameter name: indexName");
             }
 
-            [TestMethod]
+            [Fact]
             public void ShouldEnsureIndexIsNotStale()
             {
                 // Given
