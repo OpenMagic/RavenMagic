@@ -38,9 +38,9 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="OpenMagic, Version=0.3.4.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="OpenMagic, Version=0.3.5.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\OpenMagic.0.3.4.0\lib\net45\OpenMagic.dll</HintPath>
+      <HintPath>..\..\packages\OpenMagic.0.3.5.0\lib\net45\OpenMagic.dll</HintPath>
     </Reference>
     <Reference Include="Raven.Abstractions, Version=2.5.0.0, Culture=neutral, PublicKeyToken=37f41c7f99471593, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
