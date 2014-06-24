@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 using FluentAssertions;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Xunit;
 using Raven.Client;
 using Raven.Client.Indexes;
 using RavenMagic.Tests.TestHelpers.Models;
@@ -10,10 +10,9 @@ namespace RavenMagic.Tests
 {
     public class IDocumentStoreExtensionsTests
     {
-        [TestClass]
         public class ChangeRavenClrTypeForDocument
         {
-            [TestMethod]
+            [Fact]
             public void ShouldThrowArgumentNullExceptionWhen_documentStore_IsNull()
             {
                 // When
@@ -25,7 +24,7 @@ namespace RavenMagic.Tests
                     .And.ParamName.Should().Be("documentStore");
             }
 
-            [TestMethod]
+            [Fact]
             public void ShouldThrowArgumentNullExceptionWhen_id_IsNull()
             {
                 // Given 
@@ -40,7 +39,7 @@ namespace RavenMagic.Tests
                     .And.ParamName.Should().Be("id");
             }
 
-            [TestMethod]
+            [Fact]
             public void ShouldThrowArgumentNullExceptionWhen_id_IsWhiteSpace()
             {
                 // Given 
@@ -55,7 +54,7 @@ namespace RavenMagic.Tests
                     .WithMessage("Value cannot be whitespace.\r\nParameter name: id");
             }
 
-            [TestMethod]
+            [Fact]
             public void ShouldThrowArgumentNullExceptionWhen_newRavenClrType_IsNull()
             {
                 // Given 
@@ -70,7 +69,7 @@ namespace RavenMagic.Tests
                     .And.ParamName.Should().Be("newRavenClrType");
             }
 
-            [TestMethod]
+            [Fact]
             public void ShouldThrowArgumentNullExceptionWhen_newRavenClrType_IsWhiteSpace()
             {
                 // Given 
@@ -85,7 +84,7 @@ namespace RavenMagic.Tests
                     .WithMessage("Value cannot be whitespace.\r\nParameter name: newRavenClrType");
             }
 
-            [TestMethod]
+            [Fact]
             public void ShouldThrowArgumentNullExceptionWhen_id_DoesNotExist()
             {
                 // Given 
@@ -100,7 +99,7 @@ namespace RavenMagic.Tests
                     .WithMessage("fakes/1 cannot be found.");
             }
 
-            [TestMethod]
+            [Fact]
             public void ShouldChange_Raven_Clr_Type()
             {
                 // Given
@@ -122,10 +121,9 @@ namespace RavenMagic.Tests
             }
         }
 
-        [TestClass]
         public class ClearCollection
         {
-            [TestMethod]
+            [Fact]
             public void ShouldThrowArgumentNullExceptionWhen_documentStore_IsNull()
             {
                 // When
@@ -137,7 +135,7 @@ namespace RavenMagic.Tests
                     .And.ParamName.Should().Be("documentStore");
             }
 
-            [TestMethod]
+            [Fact]
             public void ShouldThrowArgumentNullExceptionWhen_indexName_IsNull()
             {
                 // Given
@@ -152,7 +150,7 @@ namespace RavenMagic.Tests
                     .And.ParamName.Should().Be("indexName");
             }
 
-            [TestMethod]
+            [Fact]
             public void ShouldThrowArgumentExceptionWhen_indexName_IsWhitespace()
             {
                 // Given
@@ -167,7 +165,7 @@ namespace RavenMagic.Tests
                     .WithMessage("Value cannot be whitespace.\r\nParameter name: indexName");
             }
 
-            [TestMethod]
+            [Fact]
             public void ShouldNotThrowExceptionDocumentStoreDoesNotHaveRequestedCollection()
             {
                 // Given
@@ -180,7 +178,7 @@ namespace RavenMagic.Tests
                 action.ShouldNotThrow<Exception>("because we want to allow unit tests to be overly cautious");
             }
 
-            [TestMethod]
+            [Fact]
             public void ShouldDeleteAllDocumentsFromTheDatabase()
             {
                 // Given
@@ -203,10 +201,9 @@ namespace RavenMagic.Tests
             }
         }
 
-        [TestClass]
         public class CreateDocumentsByEntityNameIndex
         {
-            [TestMethod]
+            [Fact]
             public void ShouldThrow_ArgumentNullException_When_documentStore_IsNull()
             {
                 // When
@@ -216,7 +213,7 @@ namespace RavenMagic.Tests
                 action.ShouldThrow<ArgumentNullException>().And.ParamName.Should().Be("documentStore");
             }
 
-            [TestMethod]
+            [Fact]
             public void ShouldCreate_Raven_DocumentsByEntityName_IndexWhenDoesNotExist()
             {
                 // Given
@@ -234,7 +231,7 @@ namespace RavenMagic.Tests
                 indexName.Should().Be("Raven/DocumentsByEntityName");
             }
 
-            [TestMethod]
+            [Fact]
             public void ShouldNotThrowAnExceptionWhen_Raven_DocumentsByEntityName_IndexDoesExist()
             {
                 // Given
@@ -248,10 +245,9 @@ namespace RavenMagic.Tests
             }
         }
 
-        [TestClass]
         public class CreateTemporaryIndex
         {
-            [TestMethod]
+            [Fact]
             public void ShouldThrowArgumentNullExceptionWhen_documentStore_IsNull()
             {
                 // When
@@ -261,7 +257,7 @@ namespace RavenMagic.Tests
                 action.ShouldThrow<ArgumentNullException>().And.ParamName.Should().Be("documentStore");
             }
 
-            [TestMethod]
+            [Fact]
             public void ShouldThrowArgumentNullExceptionWhen_documentType_IsNull()
             {
                 // Given
@@ -274,7 +270,7 @@ namespace RavenMagic.Tests
                 action.ShouldThrow<ArgumentNullException>().And.ParamName.Should().Be("documentType");
             }
 
-            [TestMethod]
+            [Fact]
             public void ShouldCreateTemporaryIndexAndReturnIndexName()
             {
                 // Given
@@ -291,7 +287,7 @@ namespace RavenMagic.Tests
                 indexes.Should().BeEquivalentTo(new string[] { indexName });
             }
 
-            [TestMethod]
+            [Fact]
             public void ShouldCreateTemporaryIndexAndReturnIndexNameForDocumentType()
             {
                 // Given
@@ -307,10 +303,9 @@ namespace RavenMagic.Tests
             }
         }
 
-        [TestClass]
         public class CorrectRavenClrTypeFor
         {
-            [TestMethod]
+            [Fact]
             public void ShouldThrowArgumentNullExceptionWhen_documentStore_IsNull()
             {
                 // When
@@ -322,7 +317,7 @@ namespace RavenMagic.Tests
                     .And.ParamName.Should().Be("documentStore");
             }
 
-            [TestMethod]
+            [Fact]
             public void ShouldThrowArgumentExceptionWhen_indexName_IsNull()
             {
                 // Given
@@ -337,7 +332,7 @@ namespace RavenMagic.Tests
                     .And.ParamName.Should().Be("indexName");
             }
 
-            [TestMethod]
+            [Fact]
             public void ShouldThrowArgumentExceptionWhen_indexName_IsWhiteSpace()
             {
                 // Given
@@ -352,7 +347,7 @@ namespace RavenMagic.Tests
                     .WithMessage("Value cannot be whitespace.\r\nParameter name: indexName");
             }
 
-            [TestMethod]
+            [Fact]
             public void ShouldChange_MetaData_Raven_Clr_Type_ForDocumentsOf_T()
             {
                 // Given
@@ -404,7 +399,7 @@ namespace RavenMagic.Tests
                 person.Name.Should().Be("fake person name", "because I'm doing a sanity check that the document could still be read");
             }
 
-            [TestMethod]
+            [Fact]
             public void ShouldChange_MetaData_Raven_Clr_Type_ForDocumentsOf_T_When_indexName_OfExistingIndexIsProvided()
             {
                 // Given
@@ -460,10 +455,9 @@ namespace RavenMagic.Tests
             }
         }
 
-        [TestClass]
         public class CorrectRavenClrTypeFor_NonGeneric
         {
-            [TestMethod]
+            [Fact]
             public void ShouldThrowArgumentNullExceptionWhen_documentStore_IsNull()
             {
                 // Given
@@ -478,7 +472,7 @@ namespace RavenMagic.Tests
                     .And.ParamName.Should().Be("documentStore");
             }
 
-            [TestMethod]
+            [Fact]
             public void ShouldThrowArgumentNullExceptionWhen_documentType_IsNull()
             {
                 // Given
@@ -493,7 +487,7 @@ namespace RavenMagic.Tests
                     .And.ParamName.Should().Be("documentType");
             }
 
-            [TestMethod]
+            [Fact]
             public void ShouldChange_MetaData_Raven_Clr_Type_ForDocumentsOf_T()
             {
                 // Given
@@ -546,10 +540,9 @@ namespace RavenMagic.Tests
             }
         }
 
-        [TestClass]
         public class CorrectRavenClrTypeForCollectionWithArguments_documentType_indexName
         {
-            [TestMethod]
+            [Fact]
             public void ShouldThrowArgumentNullExceptionWhen_documentStore_IsNull()
             {
                 // When
@@ -561,7 +554,7 @@ namespace RavenMagic.Tests
                     .And.ParamName.Should().Be("documentStore");
             }
 
-            [TestMethod]
+            [Fact]
             public void ShouldThrowArgumentNullExceptionWhen_documentType_IsNull()
             {
                 // Given
@@ -576,7 +569,7 @@ namespace RavenMagic.Tests
                     .And.ParamName.Should().Be("documentType");
             }
 
-            [TestMethod]
+            [Fact]
             public void ShouldThrowArgumentNullExceptionWhen_indexName_IsNull()
             {
                 // Given
@@ -591,7 +584,7 @@ namespace RavenMagic.Tests
                     .And.ParamName.Should().Be("indexName");
             }
 
-            [TestMethod]
+            [Fact]
             public void ShouldThrowArgumentExceptionWhen_indexName_IsWhiteSpace()
             {
                 // Given
@@ -606,7 +599,7 @@ namespace RavenMagic.Tests
                     .WithMessage("Value cannot be whitespace.\r\nParameter name: indexName");
             }
 
-            [TestMethod]
+            [Fact]
             public void ShouldChange_MetaData_Raven_Clr_Type_ForDocuments()
             {
                 // Given
@@ -627,7 +620,7 @@ namespace RavenMagic.Tests
 
                 store.ChangeRavenClrTypeForDocument(product.Id, "fake Raven-Clr-Type");
                 store.ChangeRavenClrTypeForDocument(person.Id, "fake Raven-Clr-Type");
-                
+
                 // When
                 store.CorrectRavenClrTypeForCollection(typeof(Product), indexName);
 
@@ -663,10 +656,9 @@ namespace RavenMagic.Tests
             }
         }
 
-        [TestClass]
         public class DeleteIndex
         {
-            [TestMethod]
+            [Fact]
             public void ShouldThrowArgumentNullExceptionWhen_documentStore_IsNull()
             {
                 // When
@@ -676,7 +668,7 @@ namespace RavenMagic.Tests
                 action.ShouldThrow<ArgumentNullException>().And.ParamName.Should().Be("documentStore");
             }
 
-            [TestMethod]
+            [Fact]
             public void ShouldThrowArgumentExceptionWhen_indexName_IsNull()
             {
                 // Given
@@ -691,7 +683,7 @@ namespace RavenMagic.Tests
                     .And.ParamName.Should().Be("indexName");
             }
 
-            [TestMethod]
+            [Fact]
             public void ShouldThrowArgumentExceptionWhen_indexName_IsWhiteSpace()
             {
                 // Given
@@ -706,7 +698,7 @@ namespace RavenMagic.Tests
                     .WithMessage("Value cannot be whitespace.\r\nParameter name: indexName");
             }
 
-            [TestMethod]
+            [Fact]
             public void ShouldDeleteIndex()
             {
                 // Given
@@ -723,10 +715,9 @@ namespace RavenMagic.Tests
             }
         }
 
-        [TestClass]
         public class IsIndexStale : BaseTestClass
         {
-            [TestMethod]
+            [Fact]
             public void ShouldThrowArgumentNullExceptionWhen_documentStore_IsNull()
             {
                 // When
@@ -738,7 +729,7 @@ namespace RavenMagic.Tests
                     .And.ParamName.Should().Be("documentStore");
             }
 
-            [TestMethod]
+            [Fact]
             public void ShouldThrowArgumentExceptionWhen_indexName_IsNull()
             {
                 // Given
@@ -753,7 +744,7 @@ namespace RavenMagic.Tests
                     .And.ParamName.Should().Be("indexName");
             }
 
-            [TestMethod]
+            [Fact]
             public void ShouldThrowArgumentExceptionWhen_indexName_IsWhiteSpace()
             {
                 // Given
@@ -768,7 +759,7 @@ namespace RavenMagic.Tests
                     .WithMessage("Value cannot be whitespace.\r\nParameter name: indexName");
             }
 
-            [TestMethod]
+            [Fact]
             public void ShouldReturnTrueWhenTheIndexIsStale()
             {
                 // Given
@@ -786,7 +777,7 @@ namespace RavenMagic.Tests
                 isStale.Should().BeTrue();
             }
 
-            [TestMethod]
+            [Fact]
             public void ShouldReturnFalseWhenTheIndexIsNotStale()
             {
                 // Given
@@ -805,10 +796,9 @@ namespace RavenMagic.Tests
             }
         }
 
-        [TestClass]
         public class QueryCollections
         {
-            [TestMethod]
+            [Fact]
             public void ShouldThrowArgumentNullExceptionWhen_documentStore_IsNull()
             {
                 // When
@@ -820,7 +810,7 @@ namespace RavenMagic.Tests
                     .And.ParamName.Should().Be("documentStore");
             }
 
-            [TestMethod]
+            [Fact]
             public void ShouldReturnEnumerableOfCollectionsInDocumentStore()
             {
                 // Given
@@ -841,7 +831,7 @@ namespace RavenMagic.Tests
                 collections.Should().BeEquivalentTo(new string[] { "People", "Products" }, "because we have added model types Person & Product to the database");
             }
 
-            [TestMethod]
+            [Fact]
             public void ShouldReturnEmptyEnumerableWhenDocumentStoreIsEmpty()
             {
                 // Given
@@ -855,10 +845,9 @@ namespace RavenMagic.Tests
             }
         }
 
-        [TestClass]
         public class WaitForNonStaleResults : BaseTestClass
         {
-            [TestMethod]
+            [Fact]
             public void ShouldThrowArgumentNullExceptionWhen_documentStore_IsNull()
             {
                 // When
@@ -870,7 +859,7 @@ namespace RavenMagic.Tests
                     .And.ParamName.Should().Be("documentStore");
             }
 
-            [TestMethod]
+            [Fact]
             public void ShouldThrowArgumentExceptionWhen_indexName_IsNull()
             {
                 // Given
@@ -885,7 +874,7 @@ namespace RavenMagic.Tests
                     .And.ParamName.Should().Be("indexName");
             }
 
-            [TestMethod]
+            [Fact]
             public void ShouldThrowArgumentExceptionWhen_indexName_IsWhiteSpace()
             {
                 // Given
@@ -900,7 +889,7 @@ namespace RavenMagic.Tests
                     .WithMessage("Value cannot be whitespace.\r\nParameter name: indexName");
             }
 
-            [TestMethod]
+            [Fact]
             public void ShouldEnsureIndexIsNotStale()
             {
                 // Given

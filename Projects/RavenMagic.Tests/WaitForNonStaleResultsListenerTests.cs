@@ -1,6 +1,6 @@
 ﻿using System;
 using FluentAssertions;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Xunit;
 using Moq;
 using Raven.Client;
 
@@ -8,10 +8,9 @@ namespace RavenMagic.Tests
 {
     public class WaitForNonStaleResultsListenerTests
     {
-        [TestClass]
         public class Constructor
         {
-            [TestMethod]
+            [Fact]
             public void ShouldThrowNotArgumentNullExceptionWhen_timeSpan_IsNull()
             {
                 // When
@@ -22,10 +21,9 @@ namespace RavenMagic.Tests
             }
         }
 
-        [TestClass]
         public class TimeSpan
         {
-            [TestMethod]
+            [Fact]
             public void ShouldBeValuePassedToConstructor()
             {
                 (new WaitForNonStaleResultsListener()).WaitTimeout.HasValue.Should().BeFalse("because value was not passed to constructor");
@@ -33,10 +31,9 @@ namespace RavenMagic.Tests
             }
         }
 
-        [TestClass]
         public class BeforeQueryExecuted
         {
-            [TestMethod]
+            [Fact]
             public void ShouldThrowArgumentNullExceptionWhen_queryCustomization_IsNull()
             {
                 // Given
@@ -49,7 +46,7 @@ namespace RavenMagic.Tests
                 action.ShouldThrow<ArgumentNullException>().And.ParamName.Should().Be("queryCustomization");
             }
 
-            [TestMethod]
+            [Fact]
             public void ShouldSet_queryCustomization_WaitForNonStaleResults_When_WaitTimeout_IsNull()
             {
                 // Given
@@ -63,7 +60,7 @@ namespace RavenMagic.Tests
                 queryCustomization.Verify(x => x.WaitForNonStaleResults(), Times.Exactly(1));
             }
 
-            [TestMethod]
+            [Fact]
             public void ShouldSet_queryCustomization_WaitForNonStaleResults_When_WaitTimeout_IsNotNull()
             {
                 // Given

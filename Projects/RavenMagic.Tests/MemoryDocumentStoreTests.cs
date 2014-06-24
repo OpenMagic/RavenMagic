@@ -1,17 +1,16 @@
 ﻿using System;
 using System.Linq;
 using FluentAssertions;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Xunit;
 using Raven.Client.Embedded;
 
 namespace RavenMagic.Tests
 {
     public class MemoryDocumentStoreTests
     {
-        [TestClass]
         public class Constructor : MemoryDocumentStoreTests
         {
-            [TestMethod]
+            [Fact]
             public void ShouldReturnADocumentStoreThatRunsInMemory()
             {
                 // When
@@ -21,7 +20,7 @@ namespace RavenMagic.Tests
                 documentStore.RunInMemory.Should().BeTrue();
             }
 
-            [TestMethod]
+            [Fact]
             public void ShouldReturnAnInitializedDocumentStoreWhen_initialize_IsTrue()
             {
                 // When
@@ -33,7 +32,7 @@ namespace RavenMagic.Tests
                 action.ShouldNotThrow<Exception>("because we are expect document documentStore has been initialized and documents stores need to initialized before opening a session.");
             }
 
-            [TestMethod]
+            [Fact]
             public void ShouldReturnAnUninitializedDocumentStoreWhen_initialize_IsFalse()
             {
                 // When
@@ -47,7 +46,7 @@ namespace RavenMagic.Tests
                     .WithMessage("You cannot open a session or access the database commands before initializing the document store. Did you forget calling Initialize()?");
             }
 
-            [TestMethod]
+            [Fact]
             public void ShouldReturnDocumentStoreThatDoesNotAllowStaleResultsWhen_waitForNonStaleResults_IsTrue()
             {
                 // When
@@ -57,7 +56,7 @@ namespace RavenMagic.Tests
                 this.IsNoStaleQueriesListenerRegistered(documentStore).Should().BeTrue();
             }
 
-            [TestMethod]
+            [Fact]
             public void ShouldReturnDocumentStoreThatDoesAllowStaleResultsWhen_waitForNonStaleResults_IsFalse()
             {
                 // When
@@ -67,14 +66,14 @@ namespace RavenMagic.Tests
                 this.IsNoStaleQueriesListenerRegistered(documentStore).Should().BeFalse();
             }
 
-            [TestMethod]
+            [Fact]
             public void ShouldThrowArgumentExceptionWhen_initialize_IsFalseAnd_createDocumentsByEntityNameIndex_IsTrue()
             {
                 // When
                 Action action = () => new MemoryDocumentStore(initialize: false, createDocumentsByEntityNameIndex: true);
 
                 // Then
-                action.ShouldThrow<ArgumentException>().WithMessage("initialize cannot be false when createDocumentsByEntityNameIndex is true.");                
+                action.ShouldThrow<ArgumentException>().WithMessage("initialize cannot be false when createDocumentsByEntityNameIndex is true.");
             }
         }
 
